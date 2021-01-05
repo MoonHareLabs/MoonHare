@@ -1,0 +1,9 @@
+ 
+{
+    "extends": "stylelint-config-standard",
+    "rules": {
+        "indentation": 4,
+        "rule-empty-line-before": "always",
+        "media-feature-colon-space-before": "never"
+    }
+}
