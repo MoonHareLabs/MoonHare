@@ -14,17 +14,18 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    overflow:hidden;
+    overflow: hidden;
     margin-bottom: 1em; /* Set bottom margin */
-    text-align: center; /* Align Text of btn*/
+    text-align: center; /* Align Text of btn */
     transition: background-color 0.15s ease-in-out;  /* Add background color transition */
 }
 
 /* disable transition for devices prefers reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .btn {
-    transition: none;
-  }
+
+    .btn {
+        transition: none;
+    }
 }
 
 /* Firefox: Get rid of the inner focus border */
@@ -33,31 +34,31 @@
     padding: 0;
     border: 0;
 }
-.btn:hover{
+
+.btn:hover {
     background-color: #ebebeb;
-    background-color: rgba(158,158,158, 0.20);
+    background-color: rgba(158, 158, 158, 0.2);
 }
 
-.btn:focus{
+.btn:focus {
     background-color: #e0e0e0;
-    background-color: rgba(0,0,0, 0.12);
+    background-color: rgba(0, 0, 0, 0.12);
 }
-
 
 .btn.primary {
     color: #fff;
-    background-color: #0000ff;
+    background-color: #00f;
 }
 
-.btn.primary:hover{
+.btn.primary:hover {
     background-color: #0000e6;
 }
 
 .btn.primary:focus {
-    background-color: #0000cc;
+    background-color: #00c;
 }
 
 .block {
-  display: block;
-  width: 100%;
+    display: block;
+    width: 100%;
 }

@@ -1,50 +1,80 @@
 /* Good for header, footer or body. */
+
 .container,
 .container-fluid,
 .panel {
-  padding-right: 15px;
-  padding-left: 15px;
-  margin-right: auto;
-  margin-left: auto;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
 }
 
-.panel{
-margin-top:16px;
-margin-bottom:16px
+.panel {
+    margin-top: 16px;
+    margin-bottom: 16px;
 }
 
 @media (min-width: 576px) {
-  .container {
-    max-width: 540px;
-  }
+
+    .container {
+        max-width: 540px;
+    }
 }
 
 @media (min-width: 768px) {
-  .container {
-    max-width: 720px;
-  }
+
+    .container {
+        max-width: 720px;
+    }
 }
 
 @media (min-width: 992px) {
-  .container {
-    max-width: 960px;
-  }
+
+    .container {
+        max-width: 960px;
+    }
 }
 
 @media (min-width: 1200px) {
-  .container {
-    max-width: 1140px;
-  }
+
+    .container {
+        max-width: 1140px;
+    }
 }
+
 .row {
     margin-right: -15px;
-  margin-left: -15px;
+    margin-left: -15px;
 }
-.col-1,.col-2,.col-3,.col-4,.col-5,.col-6,.col-7,.col-8,.col-9,.col-10,.col-11,.col-12,.col-1-sm,.col-2-sm,.col-3-sm,.col-4-sm,.col-5-sm,.col-6-sm,.col-7-sm,.col-8-sm,.col-9-sm,.col-10-sm,.col-11-sm,.col-12-sm {
+
+.col-1,
+.col-2,
+.col-3,
+.col-4,
+.col-5,
+.col-6,
+.col-7,
+.col-8,
+.col-9,
+.col-10,
+.col-11,
+.col-12,
+.col-1-sm,
+.col-2-sm,
+.col-3-sm,
+.col-4-sm,
+.col-5-sm,
+.col-6-sm,
+.col-7-sm,
+.col-8-sm,
+.col-9-sm,
+.col-10-sm,
+.col-11-sm,
+.col-12-sm {
     float: left;
-  min-height: 1px;
-  padding-right: 15px;
-  padding-left: 15px;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
 }
 
 .col-1,
@@ -120,8 +150,6 @@ margin-bottom:16px
     display: none;
 }
 
-
-
 @media only screen and (min-width: 576px) {
 
     .col-1 {
@@ -176,36 +204,54 @@ margin-bottom:16px
         display: block;
     }
 }
+
 .full-width {
-  width: 100%;
-  box-sizing: border-box; }
+    width: 100%;
+    box-sizing: border-box;
+}
+
 .max-full-width {
-  max-width: 100%;
-  box-sizing: border-box; }
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
 .float-right {
-  float: right; }
+    float: right;
+}
+
 .float-left {
-  float: left; }
+    float: left;
+}
 
 .ul {
-  list-style: circle inside; }
+    list-style: circle inside;
+}
+
 .ol {
-  list-style: decimal inside; }
-.ol, .ul {
-  padding-left: 0;
-  margin-top: 0; }
+    list-style: decimal inside;
+}
+
+.ol,
+.ul {
+    padding-left: 0;
+    margin-top: 0;
+}
+
 .ul ul,
 .ul ol,
 .ol ol,
 .ol ul {
-  margin: 1.5rem 0 1.5rem 3rem;
-  font-size: 90%; }
+    margin: 1.5rem 0 1.5rem 3rem;
+    font-size: 90%;
+}
+
 .li,
 .ol li,
-.ul li{
-  margin-bottom: 1rem; }
+.ul li {
+    margin-bottom: 1rem;
+}
 
 .image {
-  max-width: 100%;
-  height: auto;
+    max-width: 100%;
+    height: auto;
 }

@@ -1,11 +1,12 @@
 /* Forms
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
+
 .input {
     height: 38px;
     padding: 0.25em 0.5em;
     background-color: transparent;
     color: black;
-    border: 1px solid #D1D1D1;
+    border: 1px solid #d1d1d1;
     border-radius: 4px;
     box-shadow: none;
     box-sizing: border-box;
@@ -13,54 +14,62 @@
     outline: 0;
     transition: border-color 0.15s ease-in-out;
 }
+
 @media (prefers-reduced-motion: reduce) {
-  .input {
-    transition: none;
-  }
+
+    .input {
+        transition: none;
+    }
 }
+
 input[type="date"].input,
 input[type="time"].input,
 input[type="datetime-local"].input,
 input[type="month"].input {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 }
 
 .input::-ms-expand {
-  background-color: transparent;
-  border: 0;
+    background-color: transparent;
+    border: 0;
 }
 
 .input:-moz-focusring {
-  color: transparent;
-  text-shadow: 0 0 0 #495057;
+    color: transparent;
+    text-shadow: 0 0 0 #495057;
 }
 
 textarea.input {
-  height: auto;
-  resize: vertical;
+    height: auto;
+    resize: vertical;
 }
 
-.input:focus{
-  border-color: #33C3F0;
-  outline: 0; 
-  }
+.input:focus {
+    border-color: #33c3f0;
+    outline: 0;
+}
+
 .label,
 .legend {
-  display: block;
-  margin-bottom: .5rem;
-  font-weight: 600;
-  }
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
 .fieldset {
-  padding: 0;
-  border-width: 0; }
+    padding: 0;
+    border-width: 0;
+}
+
 input.input[type="checkbox"],
 input.input[type="radio"] {
-  display: inline; }
+    display: inline;
+}
+
 .label > .label-body {
-  display: inline-block;
-  margin-left: .5rem;
-  font-weight: normal; }
-
-
+    display: inline-block;
+    margin-left: 0.5rem;
+    font-weight: normal;
+}
