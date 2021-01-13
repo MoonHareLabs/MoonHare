@@ -16,7 +16,7 @@ jobs:
       
       - name: install sass
         run:
-          sudo npm install -g sass
+          sudo npm install -g sass pleeease-cli
 
       - name: build sass
         run:
