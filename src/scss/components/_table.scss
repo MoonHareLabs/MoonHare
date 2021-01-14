@@ -1,0 +1,114 @@
+//
+// Basic Bootstrap table
+//
+
+.table {
+  width: 100%;
+  background-color: #{$background-color};
+  background-color: var(--background-color);
+
+  // Target th & td
+  .th, .td {
+    padding: #{$padding-x}, #{$padding-y};
+    padding: var(--padding-x), var(--padding-y);
+    border-bottom: #{$border-width} solid #{$border-color};
+    border-bottom: var(--border-width) solid var(--border-color);
+  }
+
+  thead th {
+    border-bottom: #{$border-lg-width} solid #{$border-lg-color};
+    border-bottom: var(--border-lg-width) solid var(--border-lg-color);
+    font-weight: #{$font-weight-bolder};
+    font-weight: var(--font-weight-bolder);
+  }
+}
+
+
+//
+// Change placement of captions with a class
+//
+
+.caption-top {
+  caption-side: top;
+}
+
+
+//
+// Condensed table w/ half padding
+//
+
+.table.sm {
+  .th, .td {
+    padding: #{$padding-sm-x}, #{$padding-sm-y};
+    padding: var(--padding-sm-x), var(--padding-sm-y);
+  }
+}
+
+
+// Border versions
+//
+// Add or remove borders all around the table and between all the columns.
+//
+// When borders are added on all sides of the cells, the corners can render odd when
+// these borders do not have the same color or if they are semi-transparent.
+// Therefor we add top and border bottoms to the `tr`s and left and right borders
+// to the `td`s or `th`s
+
+.bordered,
+.bordered th,
+.bordered td {
+  border: #{$border-width} solid #{$border-color};
+  border: var(--border-width) solid var(--border-color);
+}
+
+.bordered thead th,
+.bordered thead td {
+  border-bottom-width: #{$border-lg-width};
+  border-bottom-width: var(--border-lg-width);
+}
+
+.borderless {
+  th,
+  td,
+  thead th {
+    border: 0;
+  }
+}
+
+// Zebra-striping
+//
+// Default zebra-stripe styles (alternating gray and transparent backgrounds)
+
+.striped {
+  tbody tr:nth-of-type((#{$striped-order}) {
+    background-color: #{$striped-color};
+    background-color: var(--striped-color);
+  }
+}
+
+// Hover effect
+//
+// Placed here since it has to come after the potential zebra striping
+
+.hover {
+  tbody tr:hover {
+    background-color: #{$hover-color};
+    background-color: var(--hover-color);
+  }
+}
+
+// Responsive tables
+//
+// Generate series of `.table-responsive-*` classes for configuring the screen
+// size of where your table will overflow.
+
+@each $breakpoint in map-keys($grid-breakpoints) {
+  $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+
+  @include media-breakpoint-down($breakpoint) {
+    .table-responsive#{$infix} {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+}
