@@ -15,7 +15,7 @@
   },
   "scripts": {
     "sass:watch": "node-sass src/scss/ -o dist/css/ -w -r --source-map-embed --source-map-contents --output-style expanded",
-    "sass:build": "node-sass src/scss/ -o dist/css/ -r --source-map-embed --source-map-contents --output-style expanded && node-sass src/scss/ -o dist/css/ --output-style compressed && npm run prefix",
+    "sass:build": "node-sass src/scss/ -o dist/css/ -r",
     "sass:build:docs": "node-sass src/scss/beautify.scss docs/css/beautify.css --source-map-embed --source-map-contents --output-style expanded",
     "prefix": "postcss dist/css/*.css -r --use=autoprefixer --no-map",
     "gulp-css": "gulp css",
