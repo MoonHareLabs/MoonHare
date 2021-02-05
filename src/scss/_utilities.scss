@@ -18,6 +18,7 @@ $utilities: map-merge(
     ),
     "box-sizing": (
       property: box-sizing,
+      responsive: true,
       class: box,
       values: (
         border: border-box,
@@ -25,49 +26,58 @@ $utilities: map-merge(
       )
     ),
     "display": (
-      print: true,
+      responsive: true,
       property: display,
       class: null,
       values: inline inline-block block grid table table-row table-caption table-cell table-raw table-column table-column-group table-footer-group table-raw-group flex inline-flex flow-root grid inline-grid contents none
     ),
     "clear": (
+      responsive: true,
       property: clear,
       values: left right both none
     ),
     "object-fit": (
       property: object-fit,
+      responsive: true,
       class: object,
       values: contain cover fill none scale-down
     ),
     "object-position": (
       property: object-position,
+      responsive: true,
       class: object,
       values: bottom center left left-bottom left-top right right-bottom right-top top
     ),
     "overflow": (
       property: overflow,
+      responsive: true,
       values: auto hidden visible scroll
     ),
     "overflow-x": (
       property: overflow-x,
+      responsive: true,
       values: auto hidden visible scroll
     ),
     "overflow-y": (
       property: overflow-y,
+      responsive: true,
       values: auto hidden visible scroll
     ),
     "overscroll-behavior": (
       property: overscroll-behavior,
+      responsive: true,
       class: overscroll,
       values: auto contain none
     ),
     "overscroll-behavior-x": (
       property: overscroll-behavior-x,
+      responsive: true,
       class: overscroll-x,
       values: auto contain none
     ),
     "overscroll-behavior-y": (
       property: overscroll-behavior-y,
+      responsive: true,
       class: overscroll-y,
       values: auto contain none
     ),
@@ -83,28 +93,32 @@ $utilities: map-merge(
     ),
     "position": (
       property: position,
+      responsive: true,
       values: static relative absolute fixed sticky
     ),
     "top": (
       property: top,
+      responsive: true,
       values: $position-values
     ),
     "bottom": (
       property: bottom,
+      responsive: true,
       values: $position-values
     ),
     "start": (
       property: left,
+      responsive: true,
       class: start,
       values: $position-values
     ),
     "end": (
       property: right,
+      responsive: true,
       class: end,
       values: $position-values
     ),
     "visibility": (
-      print: true,
       resonsive: true,
       property: visibility,
       class: null,
@@ -116,17 +130,9 @@ $utilities: map-merge(
       class: z,
       values: 0 10 20 30 40 50 auto
     ),
-    "translate-middle": (
-      property: transform,
-      class: translate-middle,
-      values: (
-        null: translate(-50%, -50%),
-        x: translateX(-50%),
-        y: translateY(-50%),
-      )
-    ),
     "border": (
       property: border,
+      resonsive: true,
       values: (
         null: $border-width solid $border-color,
         0: 0,
@@ -134,6 +140,7 @@ $utilities: map-merge(
     ),
     "border-top": (
       property: border-top,
+      resonsive: true,
       values: (
         null: $border-width solid $border-color,
         0: 0,
@@ -141,6 +148,7 @@ $utilities: map-merge(
     ),
     "border-end": (
       property: border-right,
+      resonsive: true,
       class: border-end,
       values: (
         null: $border-width solid $border-color,
@@ -149,6 +157,7 @@ $utilities: map-merge(
     ),
     "border-bottom": (
       property: border-bottom,
+      resonsive: true,
       values: (
         null: $border-width solid $border-color,
         0: 0,
@@ -157,6 +166,7 @@ $utilities: map-merge(
     "border-start": (
       property: border-left,
       class: border-start,
+      resonsive: true,
       values: (
         null: $border-width solid $border-color,
         0: 0,
@@ -165,10 +175,12 @@ $utilities: map-merge(
     "border-width": (
       property: border-width,
       class: border,
+      resonsive: true,
       values: $border-widths
     ),
     "width": (
       property: width,
+      resonsive: true,
       class: w,
       values: (
         25: 25%,
