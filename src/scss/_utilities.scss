@@ -1,12 +1,21 @@
 $utilities: () !default;
 // stylelint-disable-next-line scss/dollar-variable-default
 $utilities: map-merge(
-  (
-    "align": (
-      property: vertical-align,
-      class: align,
-      values: baseline top middle bottom text-bottom text-top
+    "box-sizing": (
+      property: box-sizing,
+      responsive: true,
+      class: box,
+      values: (
+        border: border-box,
+        content: content-box,
+      )
     ),
+    "display": (
+      responsive: true,
+      property: display,
+      class: null,
+      values: inline inline-block block grid table table-row table-caption table-cell table-raw table-column table-column-group table-footer-group table-raw-group flex inline-flex flow-root grid inline-grid contents none
+    ),(
     "float": (
       responsive: true,
       property: float,
@@ -16,95 +25,84 @@ $utilities: map-merge(
         none: none,
       )
     ),
-    "box-sizing": (
-      property: box-sizing,
-      class: box,
-      values: (
-        border: border-box,
-        content: content-box,
-      )
-    ),
-    "display": (
-      print: true,
-      property: display,
-      class: null,
-      values: inline inline-block block grid table table-row table-caption table-cell table-raw table-column table-column-group table-footer-group table-raw-group flex inline-flex flow-root grid inline-grid contents none
-    ),
     "clear": (
+      responsive: true,
       property: clear,
       values: left right both none
     ),
     "object-fit": (
+      responsive: true,
       property: object-fit,
       class: object,
       values: contain cover fill none scale-down
     ),
     "object-position": (
+      responsive: true,
       property: object-position,
       class: object,
       values: bottom center left left-bottom left-top right right-bottom right-top top
     ),
     "overflow": (
+      responsive: true,
       property: overflow,
       values: auto hidden visible scroll
     ),
     "overflow-x": (
+      responsive: true,
       property: overflow-x,
       values: auto hidden visible scroll
     ),
     "overflow-y": (
+      responsive: true,
       property: overflow-y,
       values: auto hidden visible scroll
     ),
     "overscroll-behavior": (
+      responsive: true,
       property: overscroll-behavior,
       class: overscroll,
       values: auto contain none
     ),
     "overscroll-behavior-x": (
+      responsive: true,
       property: overscroll-behavior-x,
       class: overscroll-x,
       values: auto contain none
     ),
     "overscroll-behavior-y": (
+      responsive: true,
       property: overscroll-behavior-y,
       class: overscroll-y,
       values: auto contain none
     ),
-    "shadow": (
-      property: box-shadow,
-      class: shadow,
-      values: (
-        null: $box-shadow, 
-        sm: $box-shadow-sm,
-        lg: $box-shadow-lg,
-        none: none,
-      )
-    ),
     "position": (
+      responsive: true,
       property: position,
       values: static relative absolute fixed sticky
     ),
     "top": (
+      responsive: true,
       property: top,
       values: $position-values
     ),
     "bottom": (
+      responsive: true,
       property: bottom,
       values: $position-values
     ),
     "start": (
+      responsive: true,
       property: left,
       class: start,
       values: $position-values
     ),
     "end": (
+      responsive: true,
       property: right,
       class: end,
       values: $position-values
     ),
     "visibility": (
-      print: true,
       resonsive: true,
       property: visibility,
       class: null,
