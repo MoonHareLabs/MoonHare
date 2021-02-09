@@ -801,7 +801,8 @@ $utilities: map-merge(
         "96": "24rem",
         "": 1px,
       )
-      // Margin utilities
+    )
+    // Margin utilities
     "margin": (
       responsive: true,
       property: margin,
