@@ -11,9 +11,13 @@
     padding: var(--mh-navbar-pad-y, $navbar-pad-y) var(--mh-navbar-pad-x, $navbar-pad-x);
     border: none;
     display: block;
-    float: left;
+    float: none;
     outline: 0;
     text-decoration: none;
+  }
+
+  &.default .item{
+    float: left;
   }
 
   &.bordered .item{
@@ -55,7 +59,7 @@
 @each $name, $breakpoint in $breakpoints{
   @if $name != "" {
     .navbar-#{$name} .item {
-      float: none;
+      float: left;
     }
   }
 }
