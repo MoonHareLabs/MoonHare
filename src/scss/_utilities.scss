@@ -609,7 +609,7 @@ $utilities: map-merge(
       responsive: true,
       includes: (
         -webkit-font-smoothing: antialiased auto,
-        -moz-osx-font-smoothing: grayscale, auto,
+        -moz-osx-font-smoothing: grayscale auto,
       ),
       class: null,
       keys: antialiased subpixel-antialiased,
