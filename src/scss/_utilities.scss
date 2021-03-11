@@ -587,6 +587,156 @@ $utilities: map-merge(
       keys: map-keys($max-height),
     ),
 
+    // Typography
+    "font-family": (
+      responsive: true,
+      includes: (
+        font-family: map-values($font-family),
+      ),
+      class: font,
+      keys: map-keys($font-family),
+    ),
+    "font-size": (
+      responsive: true,
+      includes: (
+        font-family: map-values($font-size),
+        line-height: $font-line-height,
+      ),
+      class: font,
+      keys: map-keys($font-size),
+    ),
+    "font-smoothing": (
+      responsive: true,
+      includes: (
+        -webkit-font-smoothing: antialiased auto,
+        -moz-osx-font-smoothing: grayscale, auto,
+      ),
+      class: null,
+      keys: antialiased subpixel-antialiased,
+    ),
+    "font-style": (
+      responsive: true,
+      includes: (
+        font-style: italic normal,
+      ),
+      class: null,
+      keys: italic non-italic,
+    ),
+    "font-weight": (
+      responsive: true,
+      includes: (
+        font-weight: map-values($font-weight),
+      ),
+      class: font,
+      keys: map-keys($font-weight),
+    ),
+    "font-variant-numeric": (
+      responsive: true,
+      includes: (
+        font-variant-numeric: normal-nums ordinal slashed-zero lining-nums oldstyle-nums proportional-nums tabular-nums diagonal-fractions stacked-fractions,
+      ),
+      class: font,
+      keys: normal ordinal slashed-zero lining-nums oldstyle-nums proportional-nums tabular-nums diagonal-fractions stacked-fractions,
+    ),
+    "letter-spacing": (
+      responsive: true,
+      includes: (
+        letter-spacing: map-values($letter-spacing),
+      ),
+      class: tracking,
+      keys: map-keys($letter-spacing),
+    ),
+    "line-height": (
+      responsive: true,
+      includes: (
+        letter-spacing: map-values($line-height),
+      ),
+      class: leading,
+      keys: map-keys($line-height),
+    ),
+    "list-style-type": (
+      responsive: true,
+      includes: (
+        list-style-type: none disc demical,
+      ),
+      class: list,
+      keys: none disc demical,
+    ),
+    "list-style-position": (
+      responsive: true,
+      includes: (
+        list-style-position: inside outside,
+      ),
+      class: list,
+      keys: inside outside,
+    ),
+    // TODO: placeholder color
+    // TODO: placeholder opacity
+    "text-align": (
+      responsive: true,
+      includes: (
+        text-align: left center right justify,
+      ),
+      class: text,
+      keys: left center right justify,
+    ),
+    "color": (
+      responsive: true,
+      includes: (
+        color: map-values($colors),
+      ),
+      class: color,
+      keys: map-keys($colors),
+    ),
+    "text-decoration": (
+      responsive: true,
+      includes: (
+        text-decoration: underline line-through none,
+      ),
+      class: null,
+      keys: underline line-through no-underline,
+    ),
+    "text-transform": (
+      responsive: true,
+      includes: (
+        text-transform: uppercase lowercase capitalize none,
+      ),
+      class: null,
+      keys: uppercase lowercase capitalize normalcase,
+    ),
+    "text-overflow": (
+      responsive: true,
+      includes: (
+        text-overflow: ellipsis clip,
+      ),
+      class: overflow,
+      keys: ellipsis clip,
+    ),
+    "vertical-align": (
+      responsive: true,
+      includes: (
+        vertical-align: baseline top middle bottom text-top text-bottom,
+      ),
+      class: align,
+      keys: baseline top middle bottom text-top text-bottom,
+    ),
+    "whitespace": (
+      responsive: true,
+      includes: (
+        whitespace: normal nowrap pre pre-line pre-wrap,
+      ),
+      class: whitespace,
+      keys: normal nowrap pre preline prewrap,
+    ),
+    "word-break": (
+      responsive: true,
+      includes: (
+        word-break: normal break-word break-all,
+      ),
+      class: break,
+      keys: normal words all,
+    ),
+
   ),
   $utilities
 );
