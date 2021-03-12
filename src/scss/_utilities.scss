@@ -1,41 +1,43 @@
-$utilities: () !default;
-// stylelint-disable-next-line scss/dollar-variable-default
-$utilities: map-merge(
-  (
-  
-    // Layout
-    "box-sizing": (
-      responsive: true,
-      includes: (
-        box-sizing: border-box content-box,
-      ),
-      class: box,
-      keys: border content,
-    ),
-    "display": (
-      responsive: true,
-      includes: (
-        display: inline inline-block block grid table table-row table-caption table-cell table-raw table-column table-column-group table-footer-group table-raw-group flex inline-flex flow-root grid inline-grid contents none,
-      ),
-      class: null,
-      keys: inline inline-block block grid table table-row table-caption table-cell table-raw table-column table-column-group table-footer-group table-raw-group flex inline-flex flow-root grid inline-grid contents none,
-    ),
-    "float": (
-      responsive: true,
-      includes: (
-        float: left right none,
-      ),
-      class: float,
-      keys: left right none,
-    ),
-    "clear": (
-      responsive: true,
-      includes: (
-        float: left right both none,
-      ),
-      class: clear,
-      keys: left right both none,
-    ),
+@mixin css($prefix: "") {
+  // Layout
+  .#{prefix}border-box {
+    box-sizing: border-box;
+  }
+  .#{prefix}content-box {
+    box-sizing: content-box;
+  }
+
+  @each $type in (inline inline-block block grid table table-row table-caption table-cell table-raw table-column table-column-group table-footer-group table-raw-group flex inline-flex flow-root grid inline-grid contents none) {
+    .#{prefix}#{type} {
+      display: #{type};
+    }
+  }
+
+  #{prefix}float {
+    &#{sep}left {
+      float: left;
+    }
+    &#{sep}right {
+      float: right;
+    }
+    &#{sep}none {
+      float: none;
+    }
+  }
+  #{prefix}clear {
+    &#{sep}left {
+      float: left;
+    }
+    &#{sep}right {
+      float: right;
+    }
+    &#{sep}both {
+      float: both;
+    }
+    &#{sep}none {
+      float: none;
+    }
+  }
     "object-fit": (
       responsive: true,
       includes: (
