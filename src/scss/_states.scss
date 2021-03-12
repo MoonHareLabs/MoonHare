@@ -1,1 +1,36 @@
 
+$hover: (
+  hover: null ":hover",
+);
+
+$focus: (
+  focus: null ":focus",
+);
+
+$active: (
+  active: null ":active",
+);
+
+$group-hover: (
+  group-hover: "group:hover " null,
+);
+
+$group-focus: (
+  group-focus: "group:focus " null,
+);
+
+$focus-within: (
+  focus-within: null ":focus-within",
+);
+
+$visited: (
+  visited: null ":visited",
+);
+
+$disabled: (
+  disabled: null ":disabled",
+);
+
+$checked: (
+  checked: null ":checked",
+);
