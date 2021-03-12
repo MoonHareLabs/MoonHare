@@ -737,6 +737,33 @@ $utilities: map-merge(
       keys: normal words all,
     ),
 
+    // Background
+
+    "background-attachment": (
+      responsive: true,
+      includes: (
+        background-attachment: fixed local scroll,
+      ),
+      class: bg,
+      keys: fixed local scroll,
+    ),
+    "background-clip": (
+      responsive: true,
+      includes: (
+        background-attachment: border-box padding-box content-box text,
+      ),
+      class: bg-clip,
+      keys: border padding content text,
+    ),
+    "background-color": (
+      responsive: true,
+      includes: (
+        background-color: map-values($background-colors),
+      ),
+      class: bg,
+      keys: map-keys($background-colors),
+    ),
+
   ),
   $utilities
 );
