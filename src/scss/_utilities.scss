@@ -790,10 +790,10 @@ $utilities: map-merge(
     "background-image": (
       responsive: true,
       includes: (
-        background-image: map-values($background-colors),
+        background-image: map-values($background-image),
       ),
       class: bg,
-      keys: map-keys($background-colors),
+      keys: map-keys($background-image),
     ),
 
   ),
