@@ -763,6 +763,38 @@ $utilities: map-merge(
       class: bg,
       keys: map-keys($background-colors),
     ),
+    "background-position": (
+      responsive: true,
+      includes: (
+        background-position: center top bottom left right "left bottom" "right bottom" "left top" "right top",
+      ),
+      class: bg,
+      keys: center top bottom left right "left bottom" "right bottom" "left top" "right top",
+    ),
+    "background-repeat": (
+      responsive: true,
+      includes: (
+        background-position: repeat no-repeat repeat-x repeat-y round space,
+      ),
+      class: bg,
+      keys: repeat no-repeat repeat-x repeat-y round space,
+    ),
+    "background-size": (
+      responsive: true,
+      includes: (
+        background-size: auto contain cover,
+      ),
+      class: bg,
+      keys: auto contain cover,
+    ),
+    "background-image": (
+      responsive: true,
+      includes: (
+        background-image: map-values($background-colors),
+      ),
+      class: bg,
+      keys: map-keys($background-colors),
+    ),
 
   ),
   $utilities
