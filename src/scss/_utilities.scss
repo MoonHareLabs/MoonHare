@@ -47,54 +47,47 @@
     }
   }
 
-    "overflow": (
-      responsive: true,
-      includes: (
-        overflow: auto hidden visible scroll,
-      ),
-      class: overflow,
-      keys: auto hidden visible scroll,
-    ),
-    "overflow-x": (
-      responsive: true,
-      includes: (
-        overflow-x: auto hidden visible scroll,
-      ),
-      class: overflow-x,
-      keys: auto hidden visible scroll,
-    ),
-    "overflow-y": (
-      responsive: true,
-      includes: (
-        overflow-y: auto hidden visible scroll,
-      ),
-      class: overflow-y,
-      keys: auto hidden visible scroll,
-    ),
-    "overscroll-behavior": (
-      responsive: true,
-      includes: (
-        overscroll-behavior: auto contain none,
-      ),
-      class: overscroll,
-      keys: auto contain none,
-    ),
-    "overscroll-behavior-x": (
-      responsive: true,
-      includes: (
-        overscroll-behavior-x: auto contain none,
-      ),
-      class: overscroll-x,
-      keys: auto contain none,
-    ),
-    "overscroll-behavior-y": (
-      responsive: true,
-      includes: (
-        overscroll-behavior-y: auto contain none,
-      ),
-      class: overscroll-y,
-      keys: auto contain none,
-    ),
+  .#{$prefix}overflow {
+    @each $value in (auto hidden visible scroll) {
+      &#{$sep}#{$value} {
+        overflow: #{$value};
+      }
+      &-x#{$sep}#{$value} {
+        overflow-x: #{$value};
+      }
+      &-y#{$sep}-y#{$value} {
+        overflow-y: #{$value};
+      }
+    }
+  }
+
+  .#{$prefix}overscroll {
+    @each $value in (auto contain none) {
+      &#{$sep}#{$value} {
+        overscroll-behavior: #{$value};
+      }
+      &-x#{$sep}#{$value} {
+        overscroll-behavior-x: #{$value};
+      }
+      &-y#{$sep}-y#{$value} {
+        overscroll-behavior-y: #{$value};
+      }
+    }
+  }
+
+  @each $value in (static relative absolute fixed sticky) {
+    .#{$prefix}#{$value} {
+      position: #{$value};
+    }
+  }
+
+  @each $key, $value in $position-values {
+    .#{$prefix}#{$sep}top {
+      #{$key} {
+        position: #{$value};
+      }
+    }
+  }
     "position": (
       responsive: true,
       includes: (
