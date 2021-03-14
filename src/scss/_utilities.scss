@@ -1,59 +1,52 @@
 @mixin css($prefix: "") {
+  $prefix: "";
+  $sep: ":";
   // Layout
-  .#{prefix}border-box {
+  .#{$prefix}border-box {
     box-sizing: border-box;
   }
-  .#{prefix}content-box {
+  .#{$prefix}content-box {
     box-sizing: content-box;
   }
 
   @each $type in (inline inline-block block grid table table-row table-caption table-cell table-raw table-column table-column-group table-footer-group table-raw-group flex inline-flex flow-root grid inline-grid contents none) {
-    .#{prefix}#{type} {
-      display: #{type};
+    .#{$prefix}#{$type} {
+      display: #{$type};
     }
   }
 
-  #{prefix}float {
-    &#{sep}left {
-      float: left;
-    }
-    &#{sep}right {
-      float: right;
-    }
-    &#{sep}none {
-      float: none;
+  .#{$prefix}float {
+    @each $value in (left right none) {
+      &#{$sep}#{$value} {
+        float: #{$value};
+      }
     }
   }
-  #{prefix}clear {
-    &#{sep}left {
-      float: left;
-    }
-    &#{sep}right {
-      float: right;
-    }
-    &#{sep}both {
-      float: both;
-    }
-    &#{sep}none {
-      float: none;
+
+  .#{$prefix}clear {
+    @each $value in (left right both none) {
+      &#{$sep}#{$value} {
+        clear: #{$value};
+      }
     }
   }
-    "object-fit": (
-      responsive: true,
-      includes: (
-        object-fit: contain cover fill none scale-down,
-      ),
-      class: object,
-      keys: contain cover fill none scale-down,
-    ),
-    "object-position": (
-      responsive: true,
-      includes: (
-        object-position: map-values($object-position),
-      ),
-      class: object,
-      keys: map-keys($object-position),
-    ),
+
+  .#{$prefix}object-fit {
+    @each $value in (contain cover fill none scale-down) {
+      &#{$sep}#{$value} {
+        object-fit: #{$value};
+      }
+    }
+  }
+  
+  .#{$prefix}object-position {
+    @each $key, $value in $object-position {
+      &#{$sep}#{$key} {
+        object-position: #{$value};
+      }
+    }
+  }
+
     "overflow": (
       responsive: true,
       includes: (
