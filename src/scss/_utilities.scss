@@ -1,7 +1,9 @@
 @mixin css($prefix: "") {
   $prefix: "";
   $sep: ":";
+
   // Layout
+
   .#{$prefix}border-box {
     box-sizing: border-box;
   }
@@ -9,7 +11,30 @@
     box-sizing: content-box;
   }
 
-  @each $type in (inline inline-block block grid table table-row table-caption table-cell table-raw table-column table-column-group table-footer-group table-raw-group flex inline-flex flow-root grid inline-grid contents none) {
+  @each $type
+    in (
+      inline
+        inline-block
+        block
+        grid
+        table
+        table-row
+        table-caption
+        table-cell
+        table-raw
+        table-column
+        table-column-group
+        table-footer-group
+        table-raw-group
+        flex
+        inline-flex
+        flow-root
+        grid
+        inline-grid
+        contents
+        none
+    )
+  {
     .#{$prefix}#{$type} {
       display: #{$type};
     }
@@ -38,7 +63,7 @@
       }
     }
   }
-  
+
   .#{$prefix}object-position {
     @each $key, $value in $object-position {
       &#{$sep}#{$key} {
@@ -74,6 +99,8 @@
       }
     }
   }
+}
+
 
   @each $value in (static relative absolute fixed sticky) {
     .#{$prefix}#{$value} {
