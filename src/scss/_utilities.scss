@@ -82,52 +82,17 @@
   }
 
   @each $key, $value in $position-values {
-    .#{$prefix}#{$sep}top {
-      #{$key} {
-        position: #{$value};
+    @each $side in (top left right bottom)
+      .#{$prefix}#{$sep}#{$side}#{$sep}#{$key} {
+        #{$side}: #{$value};
+      }
+    }
+    @each $side in (top left right bottom)
+      .#{$prefix}#{$sep}#{$side}#{$sep}#{$key} {
+        #{$side}: #{$value};
       }
     }
   }
-    "position": (
-      responsive: true,
-      includes: (
-        position: static relative absolute fixed sticky,
-      ),
-      class: null,
-      keys: static relative absolute fixed sticky,
-    ),
-    "top": (
-      responsive: true,
-      includes: (
-        top: map-values($position-values),
-      ),
-      class: top,
-      keys: map-keys($position-values),
-    ),
-    "bottom": (
-      responsive: true,
-      includes: (
-        bottom: map-values($position-values),
-      ),
-      class: bottom,
-      keys: map-keys($position-values),
-    ),
-    "left": (
-      responsive: true,
-      includes: (
-        left: map-values($position-values),
-      ),
-      class: left,
-      keys: map-keys($position-values),
-    ),
-    "right": (
-      responsive: true,
-      includes: (
-        right: map-values($position-values),
-      ),
-      class: right,
-      keys: map-keys($position-values),
-    ),
     "inset": (
       responsive: true,
       includes: (
