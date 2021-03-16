@@ -101,653 +101,81 @@
   }
 }
 
+@each $value in (static relative absolute fixed sticky) {
+  .#{$prefix}#{$value} {
+    position: #{$value};
+  }
+}
 
-  @each $value in (static relative absolute fixed sticky) {
-    .#{$prefix}#{$value} {
-      position: #{$value};
+@each $key, $value in $position-values {
+  @each $side
+    in (top left right bottom)
+    .#{$prefix}#{$sep}#{$side}#{$sep}#{$key}
+  {
+    #{$side}: #{$value};
+  }
+}
+.#{$prefix}#inset#{$sep}#{$key} {
+  top: #{$value};
+  bottom: #{$value};
+  left: #{$value};
+  right: #{$value};
+}
+.#{$prefix}#inset-y#{$sep}#{$key} {
+  top: #{$value};
+  bottom: #{$value};
+}
+.#{$prefix}#inset-x#{$sep}#{$key} {
+  left: #{$value};
+  right: #{$value};
+}
+.#{$prefix}invisible {
+  visibility: invisible;
+}
+.#{$prefix}visible {
+  visibility: visible;
+}
+.#{$prefix}z {
+  @each $value in $z-index {
+    &#{$sep}#{$value} {
+      z-index: #{$value};
     }
   }
+}
 
-  @each $key, $value in $position-values {
-    @each $side in (top left right bottom)
-      .#{$prefix}#{$sep}#{$side}#{$sep}#{$key} {
-        #{$side}: #{$value};
-      }
-    }
-    .#{$prefix}#inset#{$sep}#{$key} {
-      top: #{$value};
-      bottom: #{$value};
-      left: #{$value};
-      right: #{$value};
-    }
-    .#{$prefix}#inset-y#{$sep}#{$key} {
-      top: #{$value};
-      bottom: #{$value};
-    }
-    .#{$prefix}#inset-x#{$sep}#{$key} {
-      left: #{$value};
-      right: #{$value};
+// Flex
+.#{$prefix}flex {
+  @each $key,
+    $value
+      in (
+        row: row,
+        row-reverse: row-reverse,
+        col: column,
+        col-reverse: column-reverse
+      )
+  {
+    &#{$sep}#{$key} {
+      flex-direction: #{$value};
     }
   }
-  .#{$prefix}invisible {
-    visibility: invisible;
-  }
-  .#{$prefix}visible {
-    visibility: visible;
-  }
-  .#{$prefix}z {
-    @each $value in $z-index {
-      &#{$sep}#{$value} {
-        z-index: #{$value};
-      }
+  @each $value in (wrap wrap-reverse nowrap) {
+    &#{$sep}#{$value} {
+      flex-wrap: #{$value};
     }
   }
-
-  // Flex
-  .#{$prefix}flex {
-    @each $key, $value in (row: row, row-reverse: row-reverse, col: column, col-reverse: column-reverse) {
-      &#{$sep}#{$key} {
-        flex-direction: #{$value};
-      }
-    }
-    @each $value in (wrap wrap-reverse nowrap) {
-      &#{$sep}#{$value} {
-        flex-wrap: #{$value};
-      }
-    }
-    @each $key, $value in $flex {
-      &#{$sep}#{$key} {
-        flex: #{$value};
-      }
-    }
-    @each $key, $value in $flex-grow {
-      &#{$sep}#{$key} {
-        flex-grow: #{$value};
-      }
-    }
-    @each $key, $value in $flex-shrink {
-      &#{$sep}#{$key} {
-        flex-shrink: #{$value};
-      }
+  @each $key, $value in $flex {
+    &#{$sep}#{$key} {
+      flex: #{$value};
     }
   }
-    "flex-shrink": (
-      responsive: true,
-      includes: (
-        flex-shrink: map-values($flex-shrink),
-      ),
-      class: flex-shrink,
-      keys: map-keys($flex-shrink),
-    ),
-    "order": (
-      responsive: true,
-      includes: (
-        order: map-values($order),
-      ),
-      class: order,
-      keys: map-keys($order),
-    ),
-
-    // Grid
-    "grid-template-columns": (
-      responsive: true,
-      includes: (
-        grid-template-columns: map-values($grid-template-columns),
-      ),
-      class: grid-cols,
-      keys: map-keys($grid-template-columns),
-    ),
-    "grid-column": (
-      responsive: true,
-      includes: (
-        grid-column: map-values($grid-column),
-      ),
-      class: grid-col-span,
-      keys: map-keys($grid-column),
-    ),
-    "grid-column-start": (
-      responsive: true,
-      includes: (
-        grid-column-start: map-values($grid-column-start),
-      ),
-      class: grid-col-start,
-      keys: map-keys($grid-column-start),
-    ),
-    "grid-column-end": (
-      responsive: true,
-      includes: (
-        grid-column-end: map-values($grid-column-end),
-      ),
-      class: grid-col-end,
-      keys: map-keys($grid-column-end),
-    ),
-    "grid-template-rows": (
-      responsive: true,
-      includes: (
-        grid-template-rows: map-values($grid-template-rows),
-      ),
-      class: grid-rows,
-      keys: map-keys($grid-template-rows),
-    ),
-    "grid-row": (
-      responsive: true,
-      includes: (
-        grid-row: map-values($grid-row),
-      ),
-      class: grid-row-span,
-      keys: map-keys($grid-row),
-    ),
-    "grid-row-start": (
-      responsive: true,
-      includes: (
-        grid-row-start: map-values($grid-row-start),
-      ),
-      class: grid-row-start,
-      keys: map-keys($grid-row-start),
-    ),
-    "grid-row-end": (
-      responsive: true,
-      includes: (
-        grid-row-end: map-values($grid-row-end),
-      ),
-      class: grid-row-end,
-      keys: map-keys($grid-row-end),
-    ),
-    "grid-auto-columns": (
-      responsive: true,
-      includes: (
-        grid-auto-columns: map-values($grid-auto-columns),
-      ),
-      class: auto-cols,
-      keys: map-keys($grid-auto-columns),
-    ),
-    "grid-auto-rows": (
-      responsive: true,
-      includes: (
-        grid-auto-rows: map-values($grid-auto-rows),
-      ),
-      class: auto-rows,
-      keys: map-keys($grid-auto-rows),
-    ),
-    "grid-auto-flow": (
-      responsive: true,
-      includes: (
-        grid-auto-flow: row col "row dense" "col dense",
-      ),
-      class: grid-flow,
-      keys: row col row-dense col-dense,
-    ),
-    "gap": (
-      responsive: true,
-      includes: (
-        gap: map-values($gap),
-      ),
-      class: gap,
-      keys: map-keys($gap),
-    ),
-    "col-gap": (
-      responsive: true,
-      includes: (
-        column-gap: map-values($gap),
-      ),
-      class: col-gap,
-      keys: map-keys($gap),
-    ),
-    "raw-gap": (
-      responsive: true,
-      includes: (
-        raw-gap: map-values($gap),
-      ),
-      class: raw-gap,
-      keys: map-keys($gap),
-    ),
-
-    // Box Alignment
-    "justify-content": (
-      responsive: true,
-      includes: (
-        justify-content: flex-start flex-end center space-between space-around space-evenly,
-      ),
-      class: justify,
-      keys: start end center between around evenly,
-    ),
-    "justify-items": (
-      responsive: true,
-      includes: (
-        justify-items: auto start end center stretch,
-      ),
-      class: justify-items,
-      keys: auto start end center stretch,
-    ),
-    "justify-self": (
-      responsive: true,
-      includes: (
-        justify-self: auto start end center stretch,
-      ),
-      class: justify-self,
-      keys: auto start end center stretch,
-    ),
-    "align-content": (
-      responsive: true,
-      includes: (
-        align-content: flex-start flex-end center space-between space-around space-evenly,
-      ),
-      class: content,
-      keys: start end center between around evenly,
-    ),
-    "align-items": (
-      responsive: true,
-      includes: (
-        align-items: flex-start flex-end center baseline stretch,
-      ),
-      class: items,
-      keys: start end center baseline stretch,
-    ),
-    "place-content": (
-      responsive: true,
-      includes: (
-        place-content: start end center space-between space-around space-evenly stretch,
-      ),
-      class: place-content,
-      keys: start end center between around evenly stretch,
-    ),
-    "place-items": (
-      responsive: true,
-      includes: (
-        place-items: auto start end center stretch,
-      ),
-      class: place-items,
-      keys: auto start end center stretch,
-    ),
-    "place-self": (
-      responsive: true,
-      includes: (
-        place-self: auto start end center stretch,
-      ),
-      class: place-self,
-      keys: auto start end center stretch,
-    ),
-    
-    // Spacing
-    
-    "padding": (
-      responsive: true,
-      includes: (
-        padding: map-values($padding),
-      ),
-      class: p,
-      keys: map-keys($padding),
-    ),
-    "padding-y": (
-      responsive: true,
-      includes: (
-        padding-top: map-values($padding),
-        padding-bottom: map-values($padding),
-      ),
-      class: py,
-      keys: map-keys($padding),
-    ),
-    "padding-x": (
-      responsive: true,
-      includes: (
-        padding-left: map-values($padding),
-        padding-right: map-values($padding),
-      ),
-      class: px,
-      keys: map-keys($padding),
-    ),
-    "padding-top": (
-      responsive: true,
-      includes: (
-        padding-top: map-values($padding),
-      ),
-      class: pt,
-      keys: map-keys($padding),
-    ),
-    "padding-bottom": (
-      responsive: true,
-      includes: (
-        padding-bottom: map-values($padding),
-      ),
-      class: pb,
-      keys: map-keys($padding),
-    ),
-    "padding-left": (
-      responsive: true,
-      includes: (
-        padding-left: map-values($padding),
-      ),
-      class: pl,
-      keys: map-keys($padding),
-    ),
-    "padding-right": (
-      responsive: true,
-      includes: (
-        padding-right: map-values($padding),
-      ),
-      class: pr,
-      keys: map-keys($padding),
-    ),
-    "margin": (
-      responsive: true,
-      includes: (
-        margin: map-values($margin),
-      ),
-      class: m,
-      keys: map-keys($margin),
-    ),
-    "margin-y": (
-      responsive: true,
-      includes: (
-        margin-top: map-values($margin),
-        margin-bottom: map-values($margin),
-      ),
-      class: my,
-      keys: map-keys($margin),
-    ),
-    "margin-x": (
-      responsive: true,
-      includes: (
-        margin-left: map-values($margin),
-        margin-right: map-values($margin),
-      ),
-      class: mx,
-      keys: map-keys($margin),
-    ),
-    "margin-top": (
-      responsive: true,
-      includes: (
-        margin-top: map-values($margin),
-      ),
-      class: mt,
-      keys: map-keys($margin),
-    ),
-    "margin-bottom": (
-      responsive: true,
-      includes: (
-        margin-bottom: map-values($margin),
-      ),
-      class: mb,
-      keys: map-keys($margin),
-    ),
-    "margin-left": (
-      responsive: true,
-      includes: (
-        margin-left: map-values($margin),
-      ),
-      class: ml,
-      keys: map-keys($margin),
-    ),
-    "margin-right": (
-      responsive: true,
-      includes: (
-        margin-right: map-values($margin),
-      ),
-      class: mr,
-      keys: map-keys($margin),
-    ),
-    // TODO: space-between utilities
-
-    // Sizing
-
-    "width": (
-      responsive: true,
-      includes: (
-        width: map-values($width),
-      ),
-      class: w,
-      keys: map-keys($width),
-    ),
-    "min-width": (
-      responsive: true,
-      includes: (
-        min-width: map-values($min-width),
-      ),
-      class: min-w,
-      keys: map-keys($min-width),
-    ),
-    "max-width": (
-      responsive: true,
-      includes: (
-        max-width: map-values($max-width),
-      ),
-      class: max-w,
-      keys: map-keys($max-width),
-    ),
-    "height": (
-      responsive: true,
-      includes: (
-        height: map-values($height),
-      ),
-      class: h,
-      keys: map-keys($height),
-    ),
-    "min-height": (
-      responsive: true,
-      includes: (
-        min-height: map-values($min-height),
-      ),
-      class: min-h,
-      keys: map-keys($min-height),
-    ),
-    "max-height": (
-      responsive: true,
-      includes: (
-        max-height: map-values($max-height),
-      ),
-      class: max-h,
-      keys: map-keys($max-height),
-    ),
-
-    // Typography
-    "font-family": (
-      responsive: true,
-      includes: (
-        font-family: map-values($font-family),
-      ),
-      class: font,
-      keys: map-keys($font-family),
-    ),
-    "font-size": (
-      responsive: true,
-      includes: (
-        font-family: map-values($font-size),
-        line-height: $font-line-height,
-      ),
-      class: font,
-      keys: map-keys($font-size),
-    ),
-    "font-smoothing": (
-      responsive: true,
-      includes: (
-        -webkit-font-smoothing: antialiased auto,
-        -moz-osx-font-smoothing: grayscale auto,
-      ),
-      class: null,
-      keys: antialiased subpixel-antialiased,
-    ),
-    "font-style": (
-      responsive: true,
-      includes: (
-        font-style: italic normal,
-      ),
-      class: null,
-      keys: italic non-italic,
-    ),
-    "font-weight": (
-      responsive: true,
-      includes: (
-        font-weight: map-values($font-weight),
-      ),
-      class: font,
-      keys: map-keys($font-weight),
-    ),
-    "font-variant-numeric": (
-      responsive: true,
-      includes: (
-        font-variant-numeric: normal-nums ordinal slashed-zero lining-nums oldstyle-nums proportional-nums tabular-nums diagonal-fractions stacked-fractions,
-      ),
-      class: font,
-      keys: normal ordinal slashed-zero lining-nums oldstyle-nums proportional-nums tabular-nums diagonal-fractions stacked-fractions,
-    ),
-    "letter-spacing": (
-      responsive: true,
-      includes: (
-        letter-spacing: map-values($letter-spacing),
-      ),
-      class: tracking,
-      keys: map-keys($letter-spacing),
-    ),
-    "line-height": (
-      responsive: true,
-      includes: (
-        letter-spacing: map-values($line-height),
-      ),
-      class: leading,
-      keys: map-keys($line-height),
-    ),
-    "list-style-type": (
-      responsive: true,
-      includes: (
-        list-style-type: none disc demical,
-      ),
-      class: list,
-      keys: none disc demical,
-    ),
-    "list-style-position": (
-      responsive: true,
-      includes: (
-        list-style-position: inside outside,
-      ),
-      class: list,
-      keys: inside outside,
-    ),
-    // TODO: placeholder color
-    // TODO: placeholder opacity
-    "text-align": (
-      responsive: true,
-      includes: (
-        text-align: left center right justify,
-      ),
-      class: text,
-      keys: left center right justify,
-    ),
-    "color": (
-      responsive: true,
-      includes: (
-        color: map-values($colors),
-      ),
-      class: color,
-      keys: map-keys($colors),
-    ),
-    "text-decoration": (
-      responsive: true,
-      includes: (
-        text-decoration: underline line-through none,
-      ),
-      class: null,
-      keys: underline line-through no-underline,
-    ),
-    "text-transform": (
-      responsive: true,
-      includes: (
-        text-transform: uppercase lowercase capitalize none,
-      ),
-      class: null,
-      keys: uppercase lowercase capitalize normalcase,
-    ),
-    "text-overflow": (
-      responsive: true,
-      includes: (
-        text-overflow: ellipsis clip,
-      ),
-      class: overflow,
-      keys: ellipsis clip,
-    ),
-    "vertical-align": (
-      responsive: true,
-      includes: (
-        vertical-align: baseline top middle bottom text-top text-bottom,
-      ),
-      class: align,
-      keys: baseline top middle bottom text-top text-bottom,
-    ),
-    "whitespace": (
-      responsive: true,
-      includes: (
-        whitespace: normal nowrap pre pre-line pre-wrap,
-      ),
-      class: whitespace,
-      keys: normal nowrap pre preline prewrap,
-    ),
-    "word-break": (
-      responsive: true,
-      includes: (
-        word-break: normal break-word break-all,
-      ),
-      class: break,
-      keys: normal words all,
-    ),
-
-    // Background
-
-    "background-attachment": (
-      responsive: true,
-      includes: (
-        background-attachment: fixed local scroll,
-      ),
-      class: bg,
-      keys: fixed local scroll,
-    ),
-    "background-clip": (
-      responsive: true,
-      includes: (
-        background-attachment: border-box padding-box content-box text,
-      ),
-      class: bg-clip,
-      keys: border padding content text,
-    ),
-    "background-color": (
-      responsive: true,
-      includes: (
-        background-color: map-values($background-color),
-      ),
-      class: bg,
-      keys: map-keys($background-color),
-    ),
-    "background-position": (
-      responsive: true,
-      includes: (
-        background-position: center top bottom left right "left bottom" "right bottom" "left top" "right top",
-      ),
-      class: bg,
-      keys: center top bottom left right "left bottom" "right bottom" "left top" "right top",
-    ),
-    "background-repeat": (
-      responsive: true,
-      includes: (
-        background-position: repeat no-repeat repeat-x repeat-y round space,
-      ),
-      class: bg,
-      keys: repeat no-repeat repeat-x repeat-y round space,
-    ),
-    "background-size": (
-      responsive: true,
-      includes: (
-        background-size: auto contain cover,
-      ),
-      class: bg,
-      keys: auto contain cover,
-    ),
-    "background-image": (
-      responsive: true,
-      includes: (
-        background-image: map-values($background-image),
-      ),
-      class: bg,
-      keys: map-keys($background-image),
-    ),
-
-  ),
-  $utilities
-);
+  @each $key, $value in $flex-grow {
+    &#{$sep}#{$key} {
+      flex-grow: #{$value};
+    }
+  }
+  @each $key, $value in $flex-shrink {
+    &#{$sep}#{$key} {
+      flex-shrink: #{$value};
+    }
+  }
+}
