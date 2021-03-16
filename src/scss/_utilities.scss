@@ -114,91 +114,63 @@
         #{$side}: #{$value};
       }
     }
-    @each $side in (top left right bottom)
-      .#{$prefix}#{$sep}#{$side}#{$sep}#{$key} {
-        #{$side}: #{$value};
+    .#{$prefix}#inset#{$sep}#{$key} {
+      top: #{$value};
+      bottom: #{$value};
+      left: #{$value};
+      right: #{$value};
+    }
+    .#{$prefix}#inset-y#{$sep}#{$key} {
+      top: #{$value};
+      bottom: #{$value};
+    }
+    .#{$prefix}#inset-x#{$sep}#{$key} {
+      left: #{$value};
+      right: #{$value};
+    }
+  }
+  .#{$prefix}invisible {
+    visibility: invisible;
+  }
+  .#{$prefix}visible {
+    visibility: visible;
+  }
+  .#{$prefix}z {
+    @each $value in $z-index {
+      &#{$sep}#{$value} {
+        z-index: #{$value};
       }
     }
   }
-    "inset": (
-      responsive: true,
-      includes: (
-        top: map-values($position-values),
-        bottom: map-values($position-values),
-        left: map-values($position-values),
-        right: map-values($position-values),
-      ),
-      class: inset,
-      keys: map-keys($position-values),
-    ),
-    "inset-y": (
-      responsive: true,
-      includes: (
-        top: map-values($position-values),
-        bottom: map-values($position-values),
-      ),
-      class: inset-y,
-      keys: map-keys($position-values),
-    ),
-    "inset-x": (
-      responsive: true,
-      includes: (
-        left: map-values($position-values),
-        right: map-values($position-values),
-      ),
-      class: inset-x,
-      keys: map-keys($position-values),
-    ),
-    "visibility": (
-      responsive: true,
-      includes: (
-        visibility: invisible visible,
-      ),
-      class: null,
-      keys: invisible visible,
-    ),
-    "z-index": (
-      responsive: true,
-      includes: (
-        z-index: map-values($z-index),
-      ),
-      class: z,
-      keys: map-keys($z-index),
-    ),
-    
-    // Flex
-    "flex-direction": (
-      responsive: true,
-      includes: (
-        flex-direction: row row-reverse column column-reverse,
-      ),
-      class: flex,
-      keys: row row-reverse col col-reverse,
-    ),
-    "flex-wrap": (
-      responsive: true,
-      includes: (
-        flex-wrap: wrap wrap-reverse nowrap,
-      ),
-      class: flex,
-      keys: wrap wrap-reverse nowrap,
-    ),
-    "flex": (
-      responsive: true,
-      includes: (
-        flex: map-values($flex),
-      ),
-      class: flex,
-      keys: map-keys($flex),
-    ),
-    "flex-grow": (
-      responsive: true,
-      includes: (
-        flex-grow: map-values($flex-grow),
-      ),
-      class: flex-grow,
-      keys: map-keys($flex-grow),
-    ),
+
+  // Flex
+  .#{$prefix}flex {
+    @each $key, $value in (row: row, row-reverse: row-reverse, col: column, col-reverse: column-reverse) {
+      &#{$sep}#{$key} {
+        flex-direction: #{$value};
+      }
+    }
+    @each $value in (wrap wrap-reverse nowrap) {
+      &#{$sep}#{$value} {
+        flex-wrap: #{$value};
+      }
+    }
+    @each $key, $value in $flex {
+      &#{$sep}#{$key} {
+        flex: #{$value};
+      }
+    }
+    @each $key, $value in $flex-grow {
+      &#{$sep}#{$key} {
+        flex-grow: #{$value};
+      }
+    }
+    @each $key, $value in $flex-shrink {
+      &#{$sep}#{$key} {
+        flex-shrink: #{$value};
+      }
+    }
+  }
     "flex-shrink": (
       responsive: true,
       includes: (
