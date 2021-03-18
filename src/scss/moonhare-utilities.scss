@@ -11,7 +11,6 @@
 @import "reset";
 
 @import "utilities";
-@import "utilities/_api";
 
 @each $name, $breakpoint in $breakpoints {
   @include media($name, $breakpoint) {
