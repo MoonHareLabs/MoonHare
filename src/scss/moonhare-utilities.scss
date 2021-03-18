@@ -12,12 +12,4 @@
 
 @import "utilities";
 
-@each $name, $breakpoint in $breakpoints {
-  @include media($name, $breakpoint) {
-    @each $key, $utility in $utilities {
-     @if $name == "" or (map-has-key($utility, responsive) and map-get($utility, responsive) == true) {
-       @include generate-utility($utility, $name);
-     }
-    }
-  }
-}
+@include css();
