@@ -108,9 +108,10 @@
 }
 
 @each $key, $value in $position-values {
-  @each $side in (top left right bottom)
+  @each $side in (top left right bottom) {
     .#{$prefix}#{$sep}#{$side}#{$sep}#{$key} {
-    #{$side}: #{$value};
+      #{$side}: #{$value};
+    }
   }
 }
 .#{$prefix}#inset#{$sep}#{$key} {
