@@ -1,9 +1,0 @@
-@function negativify-map($map) {
-  $result: ();
-  @each $key, $value in $map {
-    @if $value != 0 {
-      $result: map-merge($result, ("-" + $key: (-$value)));
-    }
-  }
-  @return $result;
-}
