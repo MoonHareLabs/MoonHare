@@ -1,0 +1,17 @@
+@use "sass:string";
+
+@function name-class($class-prefix, $key) {
+  @if $key == null or $key == '' {
+    @return $class-prefix;
+  }
+
+  @if key == '-' {
+    @return '-' + $class-prefix;
+  }
+
+  @if string.slice($key, 0, 1) == '-' {
+    @return '-' + $class-prefix + $key;
+  }
+
+  @return $class-prefix + '-' + $key;
+}
