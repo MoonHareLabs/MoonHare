@@ -1,0 +1,29 @@
+@mixin display-plugin($prefix: "") {
+  @each $type
+    in (
+      inline
+        inline-block
+        block
+        grid
+        table
+        table-caption
+        table-cell
+        table-row
+        table-column
+        table-column-group
+        table-footer-group
+        table-row-group
+        flex
+        inline-flex
+        flow-root
+        grid
+        inline-grid
+        contents
+        none
+    )
+  {
+    #{$prefix}#{$type} {
+      display: #{$type};
+    }
+  }
+}
