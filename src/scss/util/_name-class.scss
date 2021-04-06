@@ -9,7 +9,11 @@
     @return '-' + $class-prefix;
   }
 
-  @if string.slice($key, 0, 1) == '-' {
+  @if type-of($key) == string and string.slice($key, 0, 1) == '-' {
+    @return '-' + $class-prefix + $key;
+  }
+
+  @if key < 0 {
     @return '-' + $class-prefix + $key;
   }
 
