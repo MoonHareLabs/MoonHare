@@ -1,0 +1,16 @@
+@use '../util/name-class' as *;
+@use '../config' as *;
+$_text-opacity-plugin: map-remove((x: x,), x);
+
+@each $key, $value in map-get($theme, text-opacity) {
+    $_text-opacity-plugin: map-merge(
+        $_text-opacity-plugin,
+        (
+            name-class('text-opacity', $key): (
+                --mh-text-opacity: #{$value},
+            ),
+        )
+    );
+}
+
+$text-opacity-plugin: $_text-opacity-plugin !default;
