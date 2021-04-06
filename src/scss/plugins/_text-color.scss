@@ -1,0 +1,17 @@
+@use '../util/name-class' as *;
+@use '../config' as *;
+$_text-color-plugin: map-remove((x: x,), x);
+
+@each $key, $value in map-get($theme, text-color) {
+    $_text-color-plugin: map-merge(
+        $_text-color-plugin,
+        (
+            name-class('text', $key): (
+                --mh-text-opacity: 1,
+                color: rgba($value, var(--mh-text-opacity)),
+            ),
+        )
+    );
+}
+
+$text-color-plugin: $_text-color-plugin !default;

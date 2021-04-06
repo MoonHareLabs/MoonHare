@@ -1,0 +1,9 @@
+@use "plugins/display" as *;
+@use "plugins/text-color" as *;
+@use "plugins/box-sizing" as *;
+
+$plugins: (
+    box-sizing: $box-sizing-plugin,
+    display: $display-plugin,
+    text-color: $text-color-plugin,
+);

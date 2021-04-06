@@ -1,0 +1,44 @@
+@use 'config' as *;
+@use 'default-plugins' as *;
+
+@mixin run-plugin($name, $prefix: ".") {
+    @each $sel, $decl in map-get($plugins, $name) {
+        #{$prefix}#{$sel} {
+            @each $prop, $value in $decl {
+                #{$prop}: #{$value};
+            }
+        }
+    }
+}
+
+@mixin default-variants($prefix: ".") {
+    @each $name, $vars in $variants{
+        @if index($vars, default) {
+            @include run-plugin($name, $prefix);
+        }
+    }
+}
+
+@mixin responsive-variants($prefix: ".") {
+    @each $screen, $size in map-get($theme, screens) {
+        @media (min-width: #{$size}) {
+            @each $name, $vars in $variants{
+                @if index($vars, responsive) {
+                    @include run-plugin($name, $prefix + $screen + $separator);
+                }
+            }
+        }
+    }
+}
+
+@mixin generate-css() {
+  @include default-variants(".");
+  @include responsive-variants(".");
+}
+
+@mixin generate-kkkk() {
+  @include default-variants("%");
+  @include responsive-variants("%");
+}
+
+
