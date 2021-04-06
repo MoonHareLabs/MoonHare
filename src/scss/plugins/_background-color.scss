@@ -1,0 +1,17 @@
+@use '../util/name-class' as *;
+@use '../config' as *;
+$_background-color-plugin: map-remove((x: x,), x);
+
+@each $key, $value in map-get($theme, background-color) {
+    $_background-color-plugin: map-merge(
+        $_background-color-plugin,
+        (
+            name-class('bg', $key): (
+                --mh-bg-opacity: 1,
+                background-color: rgba($value, var(--mh-bg-opacity)),
+            ),
+        )
+    );
+}
+
+$background-color-plugin: $_background-color-plugin !default;
