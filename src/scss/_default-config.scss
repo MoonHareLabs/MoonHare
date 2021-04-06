@@ -308,6 +308,8 @@ $_theme: map-merge(
     (text-color: $colors,)
 );
 
+$theme: $_theme !default;
+
 $variant-order: (
   first,
   last,
