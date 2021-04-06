@@ -264,17 +264,49 @@ $colors: (
     "transparent": transparent,
 ) !default;
 
-$theme: (
-    colors: $colors,
-    screens: (
+$_theme: map-remove((x: x,), x);
+
+$_theme: map-merge(
+    $_theme,
+    (colors: $colors,)
+);
+
+$_theme: map-merge(
+    $_theme,
+    (opacity: (
+        0: '0',
+        5: '0.05',
+        10: '0.1',
+        20: '0.2',
+        25: '0.25',
+        30: '0.3',
+        40: '0.4',
+        50: '0.5',
+        60: '0.6',
+        70: '0.7',
+        75: '0.75',
+        80: '0.8',
+        90: '0.9',
+        95: '0.95',
+        100: '1',
+    ),)
+);
+
+$_theme: map-merge(
+    $_theme,
+    (screens: (
         sm: 640px,
         md: 768px,
         lg: 1024px,
         xl: 1280px,
         xxl: 1536px,
-    ),
-    text-color: $colors,
-) !default;
+    ),)
+);
+
+$_theme: map-merge(
+    $_theme,
+    (text-color: $colors,)
+);
 
 $variant-order: (
   first,
