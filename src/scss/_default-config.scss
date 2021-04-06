@@ -305,7 +305,27 @@ $_theme: map-merge(
 
 $_theme: map-merge(
     $_theme,
-    (text-color: $colors,)
+    (colors: $colors,)
+);
+
+$_theme: map-merge(
+    $_theme,
+    (text-color: map-get($_theme, colors),)
+);
+
+$_theme: map-merge(
+    $_theme,
+    (text-opacity: map-get($_theme, opacity),)
+);
+
+$_theme: map-merge(
+    $_theme,
+    (background-color: map-get($_theme, colors),)
+);
+
+$_theme: map-merge(
+    $_theme,
+    (background-opacity: map-get($_theme, opacity),)
 );
 
 $theme: $_theme !default;
