@@ -1,0 +1,16 @@
+@use '../util/name-class' as *;
+@use '../config' as *;
+$_background-opacity-plugin: map-remove((x: x,), x);
+
+@each $key, $value in map-get($theme, background-opacity) {
+    $_background-opacity-plugin: map-merge(
+        $_background-opacity-plugin,
+        (
+            name-class('bg-opacity', $key): (
+                --mh-bg-opacity: #{$value},
+            ),
+        )
+    );
+}
+
+$background-opacity-plugin: $_background-opacity-plugin !default;
