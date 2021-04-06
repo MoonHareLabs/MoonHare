@@ -1,9 +1,15 @@
 @use "plugins/display" as *;
 @use "plugins/text-color" as *;
+@use "plugins/text-opacity" as *;
+@use "plugins/background-color" as *;
+@use "plugins/background-opacity" as *;
 @use "plugins/box-sizing" as *;
 
 $plugins: (
     box-sizing: $box-sizing-plugin,
     display: $display-plugin,
     text-color: $text-color-plugin,
+    text-opacity: $text-opacity-plugin,
+    background-color: $background-color-plugin,
+    background-opacity: $background-opacity-plugin,
 );
