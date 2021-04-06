@@ -8,7 +8,7 @@ $_background-color-plugin: map-remove((x: x,), x);
         (
             name-class('bg', $key): (
                 --mh-bg-opacity: 1,
-                background-color: rgba($value, var(--mh-bg-opacity)),
+                background-color: if(map-has-key($theme, background-opacity) , rgba($value, var(--mh-bg-opacity)) , $value),
             ),
         )
     );
