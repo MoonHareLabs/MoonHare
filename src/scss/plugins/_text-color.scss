@@ -8,7 +8,7 @@ $_text-color-plugin: map-remove((x: x,), x);
         (
             name-class('text', $key): (
                 --mh-text-opacity: 1,
-                color: rgba($value, var(--mh-text-opacity)),
+                color: if(map-has-key($theme, text-opacity) , rgba($value, var(--mh-text-opacity)) , $value),
             ),
         )
     );
