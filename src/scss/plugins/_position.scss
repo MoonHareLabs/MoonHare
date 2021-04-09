@@ -1,0 +1,12 @@
+$position-plugin: map-remove((x: x,), x);
+
+@each $value in (static fixed absolute relative sticky){
+    $position-plugin: map-merge(
+        $position-plugin,
+        (
+            $value: (
+                position: $va;ue,
+            ),
+        )
+    );
+}
