@@ -87,6 +87,11 @@ $_theme: map-merge(
     ),)
 );
 
+$_theme: map-merge(
+    $_theme,
+    (gradient-color-stops: map-get($_theme, colors),)
+);
+
 $theme: $_theme !default;
 
 $variant-order: (
