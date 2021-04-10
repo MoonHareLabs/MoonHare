@@ -3,6 +3,7 @@
 @use "plugins/background-opacity" as *;
 @use "plugins/box-sizing" as *;
 @use "plugins/display" as *;
+@use "plugins/gradient-color-stops" as *;
 @use "plugins/position" as *;
 @use "plugins/text-color" as *;
 @use "plugins/text-opacity" as *;
@@ -13,6 +14,7 @@ $plugins: (
     background-opacity: $background-opacity-plugin,
     box-sizing: $box-sizing-plugin,
     display: $display-plugin,
+    gradient-color-stops: $gradient-color-stops-plugin,
     position: $position-plugin,
     text-color: $text-color-plugin,
     text-opacity: $text-opacity-plugin,
