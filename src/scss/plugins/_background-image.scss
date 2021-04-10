@@ -1,0 +1,14 @@
+@use '../util/name-class' as *;
+@use '../config' as *;
+$background-image-plugin: map-remove((x: x,), x);
+
+@each $key, $value in map-get($theme, background-image) {
+    $background-image-plugin: map-merge(
+        $background-image-plugin,
+        (
+            name-class('bg', $key): (
+                background-image: $value,
+            ),
+        )
+    );
+}
