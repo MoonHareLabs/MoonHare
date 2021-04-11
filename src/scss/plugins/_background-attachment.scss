@@ -1,0 +1,14 @@
+@use '../util/name-class' as *;
+
+$background-attachment-plugin: map-remove((x: x,), x);
+
+@each $value in (fixed local scroll) {
+    $background-attachment-plugin: map-merge(
+        $background-attachment-plugin,
+        (
+            name-class(bg, $value): (
+                background-attachment: $value,
+            ),
+        )
+    );
+}
