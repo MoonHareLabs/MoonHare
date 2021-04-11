@@ -1,10 +1,12 @@
+@use '../util/name-class' as *;
+
 $background-repeat-plugin: map-remove((x: x,), x);
 
 @each $value in (repeat no-repeat repeat-x repeat-y round space) {
     $background-repeat-plugin: map-merge(
         $background-repeat-plugin,
         (
-            $value: (
+            name-class(bg, $value): (
                 background-repeat: $value,
             ),
         )
