@@ -1,0 +1,12 @@
+$background-repeat-plugin: map-remove((x: x,), x);
+
+@each $value in (repeat no-repeat repeat-x repeat-y round space) {
+    $background-repeat-plugin: map-merge(
+        $background-repeat-plugin,
+        (
+            $value: (
+                background-repeat: $value,
+            ),
+        )
+    );
+}
