@@ -1,0 +1,21 @@
+@use '../util/name-class' as *;
+@use '../config' as *;
+$gradient-color-stops-plugin: map-remove((x: x,), x);
+
+@each $key, $value in map-get($theme, gradient-color-stops) {
+    $gradient-color-stops-plugin: map-merge(
+        $gradient-color-stops-plugin,
+        (
+            name-class('from', $key): (
+                '--#{$prefix}-gradient-from': $value,
+                '--#{$prefix}-gradient-stops': 'var(--#{$prefix}-gradient-from), var(--#{$prefix}-gradient-to, #{rgba($value, 0)})',
+            ),
+            name-class('via', $key): (
+                '--#{$prefix}-gradient-stops': 'var(--#{$prefix}-gradient-from), #{$value}, var(--#{$prefix}-gradient-to, {rgba($value, 0)})',
+            ),
+            name-class('to', $key): (
+                '--#{$prefix}-gradient-to': $value,
+            ),
+        )
+    );
+}
