@@ -1,0 +1,14 @@
+@use '../util/name-class' as *;
+@use '../config' as *;
+$background-position-plugin: map-remove((x: x,), x);
+
+@each $key, $value in map-get($theme, background-position) {
+    $background-position-plugin: map-merge(
+        $background-position-plugin,
+        (
+            name-class('bg', $key): (
+                background-position: $value,
+            ),
+        )
+    );
+}
