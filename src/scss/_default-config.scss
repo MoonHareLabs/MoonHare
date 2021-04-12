@@ -358,13 +358,6 @@ $_theme: map-merge($_theme, (opacity: $opacity,));
 $_theme: map-merge(
   $_theme,
   (
-    negative-spacing: negative-map($spacing),
-  )
-);
-
-$_theme: map-merge(
-  $_theme,
-  (
     object-position: (
       bottom: bottom,
       center: center,
