@@ -1,5 +1,6 @@
-use '../util/name-class' as *;
+@use '../util/name-class' as *;
 @use '../config' as *;
+
 $border-color-plugin: map-remove((x: x,), x);
 
 @each $key, $value in map-get($theme, border-color) {
