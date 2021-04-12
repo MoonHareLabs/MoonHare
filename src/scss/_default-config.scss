@@ -189,7 +189,7 @@ $_theme: map-merge(
 $_theme: map-merge(
   $_theme,
   (
-    border-color: map-merge((null, gray), map-get($_theme, colors)),
+    border-color: map-merge((null: gray,), map-get($_theme, colors)),
   )
 );
 
