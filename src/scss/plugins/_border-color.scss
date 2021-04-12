@@ -1,0 +1,20 @@
+use '../util/name-class' as *;
+@use '../config' as *;
+$border-color-plugin: map-remove((x: x,), x);
+
+@each $key, $value in map-get($theme, border-color) {
+    $border-color-plugin: map-merge(
+        $border-color-plugin,
+        (
+            name-class('bg', $key): if(map-has-key($theme, border-opacity), 
+                (
+                    --#{$prefix}-border-opacity: 1,
+                    border-color: rgba($value, var(--#{$prefix}-border-opacity)),
+                ),
+                (
+                    border-color: $value,
+                )
+            ),
+        )
+    );
+}
