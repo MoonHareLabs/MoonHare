@@ -230,6 +230,129 @@ $_theme: map-merge(
   )
 );
 
+$_theme: map-merge(
+  $_theme,
+  (
+    box-shadow: (
+      sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+      DEFAULT: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+      md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+      lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+      xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+      '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+      inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
+      none: 'none',
+    ),
+  )
+);
+
+$_theme: map-merge(
+  $_theme,
+  (
+    cursor: (
+      auto: 'auto',
+      default: 'default',
+      pointer: 'pointer',
+      wait: 'wait',
+      text: 'text',
+      move: 'move',
+      help: 'help',
+      'not-allowed': 'not-allowed',
+    ),
+  )
+);
+
+$_theme: map-merge($_theme, (divide-color: map-get($_theme, border-color),));
+
+$_theme: map-merge($_theme, (divide-opacity: map-get($_theme, border-opacity),));
+
+$_theme: map-merge($_theme, (divide-width: map-get($_theme, border-width),));
+
+$_theme: map-merge(
+  $_theme,
+  (
+    flex: {
+      1: '1 1 0%',
+      auto: '1 1 auto',
+      initial: '0 1 auto',
+      none: 'none',
+    ),
+  )
+);
+
+$_theme: map-merge(
+  $_theme,
+  (
+    flex-grow: {
+      0: '0',
+      null: '1',
+    ),
+  )
+);
+
+$_theme: map-merge(
+  $_theme,
+  (
+    flex-shrink: {
+      0: '0',
+      null: '1',
+    ),
+  )
+);
+
+$_theme: map-merge(
+  $_theme,
+  (
+    font-family: (
+      sans:
+        unquote(
+          'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"'
+        ),
+      serif: unquote('ui-serif, Georgia, Cambria, "Times New Roman", Times, serif'),
+      mono:
+        unquote(
+          'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
+        ),
+    ),
+  )
+);
+
+$_theme: map-merge(
+  $_theme,
+  (
+    font-size: (
+      xs:    "0.75rem",
+      sm:    "0.875rem",
+      base:  "1rem",
+      lg:    "1.125rem",
+      xl:    "1.25rem",
+      "2xl": "1.5rem",
+      "3xl": "1.875rem",
+      "4xl": "2.25rem",
+      "5xl": "3rem",
+      "6xl": "3.75rem",
+      "7xl": "4.5rem",
+      "8xl": "6rem",
+      "9xl": "8rem",
+    ),
+    font-line-height: (
+      xs:   "1rem",
+      sm:   "1.25rem",
+      base: "1.5rem",
+      lg:   "1.75rem",
+      xl:   "1.75rem",
+      "2xl":"2rem",
+      "3xl":"2.25rem",
+      "4xl":"2.5rem",
+      "5xl":"1",
+      "6xl":"1",
+      "7xl":"1",
+      "8xl":"1",
+      "9xl":"1"
+    ),
+  )
+);
+
 $_theme: map-merge($_theme, (opacity: $opacity,));
 
 $_theme: map-merge(
