@@ -271,7 +271,7 @@ $_theme: map-merge($_theme, (divide-width: map-get($_theme, border-width),));
 $_theme: map-merge(
   $_theme,
   (
-    flex: {
+    flex: (
       1: '1 1 0%',
       auto: '1 1 auto',
       initial: '0 1 auto',
@@ -283,7 +283,7 @@ $_theme: map-merge(
 $_theme: map-merge(
   $_theme,
   (
-    flex-grow: {
+    flex-grow: (
       0: '0',
       null: '1',
     ),
@@ -293,7 +293,7 @@ $_theme: map-merge(
 $_theme: map-merge(
   $_theme,
   (
-    flex-shrink: {
+    flex-shrink: (
       0: '0',
       null: '1',
     ),
