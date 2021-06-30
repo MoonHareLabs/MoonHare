@@ -71,7 +71,9 @@
   flex-grow: var(--flx-grow);
   flex-shrink: var(--flx-shrink);
   order: var(--order);
-  grid-template-columns: var(--grid-cols);
+  grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
+  grid-column: span var(--;
+
   grid-column: var(--col);
   grid-template-rows: var(--grid-rows);
   grid-template-rows: var(--grid-rows);
