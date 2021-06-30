@@ -32,6 +32,19 @@
   --pb: initial;
   --pl: initial;
   --pr: initial;
+  --m: initial;
+  --mx: initial;
+  --my: initial;
+  --mt: initial;
+  --mb: initial;
+  --ml: initial;
+  --mr: initial;
+  --w: initial;
+  --min-w: initial;
+  --max-w: initial;
+  --h: initial;
+  --min-h: initial;
+  --max-h: initial;
 
   display: var(--d);
   float: var(--float);
@@ -45,10 +58,10 @@
   overscroll-behavior-x: var(--scroll-x);
   overscroll-behavior-y: var(--scroll-y);
   position: var(--pos);
-  top: var(--inset, var(--inset-y, var(--top)));
-  bottom: var(--inset, var(--inset-y, var(--bottom)));
-  left: var(--inset, var(--inset-x, var(--left)));
-  right: var(--inset, var(--inset-x, var(--right)));
+  top: var(--top, var(--inset-y, var(--inset)));
+  bottom: var(--bottom, var(--inset-y, var(--inset)));
+  left: var(--left, var(--inset-x, var(--inset)));
+  right: var(--right, var(--inset-x, var(--inset)));
   flex: var(--flx);
   flex-direction: var(--flx-dir);
   flex-wrap: var(--flx-wrap);
@@ -65,4 +78,12 @@
   margin-bottom: var(--mb, var(--my));
   margin-left: var(--ml, var(--mx));
   margin-right: var(--mr, var(--mx));
+  width: var(--w);
+  min-width: var(--min-w);
+  max-width: var(--max-w);
+  height: var(--h);
+  min-height: var(--min-h);
+  max-height: var(--max-h);
+  flex: var(--flx);
+
 }
