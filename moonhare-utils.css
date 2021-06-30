@@ -92,5 +92,25 @@
   font-weight: var(--text);
   text-decoration: var(--decorate);
   text-transform: var(--case);
+  font-family: var(--font);
 
+
+  background-attachment: var(--bg-attach);
+  background-clip: var(--bg-clip);
+  background-color: var(--bg);
+  background-origin: var(--bg-origin);
+  background-position: var(--bg-pos);
+  background-repeat: var(--bg-repeat);
+  background-size: var(--bg-size);
+
+  border-radius: var(--round);
+  border-width: var(--b-width);
+  border-top-width: var(--bt-width);
+  border-bottom-width: var(--bb-width);
+  border-left-width: var(--bl-width);
+  border-right-width: var(--br-width);
+  border-color: var(--border);
+  border-style: var(--b-style);
+
+  opacity: var(--opacity);
 }
