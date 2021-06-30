@@ -1,0 +1,4 @@
+* {
+  --bg: initial;
+  background-color: var(--bg)
+}
