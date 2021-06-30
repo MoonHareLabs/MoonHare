@@ -19,6 +19,14 @@
   --left: initial;
   --right: initial;
   --z: initial;
+  --flx: initial;
+  --flx-dir: initial;
+  --flx-wrap: initial;
+  --flx-grow: initial;
+  --flx-shrink: initial;
+  --right: initial;
+  --right: initial;
+  --right: initial;
 
   display: var(--d);
   float: var(--float);
@@ -32,10 +40,17 @@
   overscroll-behavior-x: var(--scroll-x);
   overscroll-behavior-y: var(--scroll-y);
   position: var(--pos);
-  top: var(--inset);
-  bottom: var(--inset, var(inset-y));
-  left: var(--inset-y);
-  right: var(--top);
+  position: var(--pos);
+  position: var(--pos);
+  position: var(--pos);
+  position: var(--pos);
+  position: var(--pos);
+  position: var(--pos);
+
+  top: var(--inset, var(--inset-y, var(--top)));
+  bottom: var(--inset, var(--inset-y, var(--bottom)));
+  left: var(--inset, var(--inset-x, var(--left)));
+  right: var(--inset, var(--inset-x, var(--right)));
   display: var(--z);
 
 }
