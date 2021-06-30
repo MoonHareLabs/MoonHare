@@ -24,7 +24,7 @@
   --flx-wrap: initial;
   --flx-grow: initial;
   --flx-shrink: initial;
-  --right: initial;
+  --order: initial;
   --right: initial;
   --right: initial;
 
@@ -40,17 +40,16 @@
   overscroll-behavior-x: var(--scroll-x);
   overscroll-behavior-y: var(--scroll-y);
   position: var(--pos);
-  position: var(--pos);
-  position: var(--pos);
-  position: var(--pos);
-  position: var(--pos);
-  position: var(--pos);
-  position: var(--pos);
-
   top: var(--inset, var(--inset-y, var(--top)));
   bottom: var(--inset, var(--inset-y, var(--bottom)));
   left: var(--inset, var(--inset-x, var(--left)));
   right: var(--inset, var(--inset-x, var(--right)));
-  display: var(--z);
+  flex: var(--flx);
+  flex-direction: var(--flx-dir);
+  flex-wrap: var(--flx-wrap);
+  flex-grow: var(--flx-grow);
+  flex-shrink: var(--flx-shrink);
+  order: var(--order);
+
 
 }
