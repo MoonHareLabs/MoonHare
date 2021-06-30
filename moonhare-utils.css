@@ -46,6 +46,7 @@
   --min-h: initial;
   --max-h: initial;
 
+  /* LAYOUT */
   display: var(--d);
   float: var(--float);
   clear: var(--clear);
@@ -62,12 +63,18 @@
   bottom: var(--bottom, var(--inset-y, var(--inset)));
   left: var(--left, var(--inset-x, var(--inset)));
   right: var(--right, var(--inset-x, var(--inset)));
+
+  /* FLEXBOX AND GRID */
   flex: var(--flx);
   flex-direction: var(--flx-dir);
   flex-wrap: var(--flx-wrap);
   flex-grow: var(--flx-grow);
   flex-shrink: var(--flx-shrink);
   order: var(--order);
+  grid-template-columns: var(--grid-cols);
+  grid-column: var(--col);
+  grid-template-rows: var(--grid-rows);
+  grid-template-rows: var(--grid-rows);
   padding: var(--p);
   padding-top: var(--pt, var(--py));
   padding-bottom: var(--pb, var(--py));
