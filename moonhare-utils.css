@@ -1,0 +1,10 @@
+* {
+  --bg: initial;
+  --d: initial;
+  --float: initial;
+  --clear: initial;
+  --fit: initial;
+  --obj: initial;
+  background-color: var(--bg);
+  display: var(--d);
+}
