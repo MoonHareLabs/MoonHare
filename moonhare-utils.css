@@ -1,5 +1,4 @@
 * {
-  --bg: initial;
   --d: initial;
   --float: initial;
   --clear: initial;
@@ -21,6 +20,22 @@
   --right: initial;
   --z: initial;
 
-  background-color: var(--bg);
   display: var(--d);
+  float: var(--float);
+  clear: var(--clear);
+  object-fit: var(--fit);
+  object-position: var(--obj);
+  overflow: var(--flow);
+  overflow-x: var(--flow-x);
+  overflow-y: var(--flow-y);
+  overscroll-behavior: var(--scroll);
+  overscroll-behavior-x: var(--scroll-x);
+  overscroll-behavior-y: var(--scroll-y);
+  position: var(--pos);
+  top: var(--inset);
+  bottom: var(--inset, var(inset-y));
+  left: var(--inset-y);
+  right: var(--top);
+  display: var(--z);
+
 }
