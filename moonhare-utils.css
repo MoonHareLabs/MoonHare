@@ -86,4 +86,11 @@
   max-height: var(--max-h);
   flex: var(--flx);
 
+  font-size: var(--text);
+  font-style: var(--style);
+  font-weight: var(--bold);
+  font-weight: var(--text);
+  text-decoration: var(--decorate);
+  text-transform: var(--case);
+
 }
