@@ -1,5 +1,5 @@
 function process() {
-    let varaintNames, pluginPart, styleSheet, varaintName, variant
+    let varaintNames, pluginPart, styleSheet, varaintName, variant, pluginArgs
     varaintNames = className.split(config.variantsSeparator)
     pluginPart = varaintNames.pop()
     if (config.prefix) {
@@ -7,6 +7,8 @@ function process() {
         else return
     }
     pluginArgs = pluginPart.split(config.separator)
+    pluginName = pluginPart.shift()
+    styles = config.plugins[pluginName](pluginArgs)
     
     for (varaintName of varaintNames) {
         variant = config.variants[varaintName]
