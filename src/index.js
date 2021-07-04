@@ -4,7 +4,19 @@ class Processor {
         this.config = config
     }
     
-    processVariants(variantNames, code) {
+    processUtil(className) {
+        let varaintNames, pluginPart, styles
+        varaintNames = className.split(this.config.variantsSeparator)
+        pluginPart = varaintNames.pop()
+        if (this.config.prefix) {
+            if (pluginPart.startsWith(this.config.prefix)) pluginPart = pluginPart.slice(this.config.prefix.length)
+            else return
+        }
+        styles = this.processPlugins(pluginPart, className)
+        
+    }
+    
+    processVariants(variantNames, styles) {
         let variantName, variant, styleSheet
         for (variantName of variantNames) {
             variant = this.config.variants[variantName]
@@ -16,11 +28,11 @@ class Processor {
 
     
     processPlugins(pluginPart, className) {
-        let pluginArgs, pluginName, plugin
-        pluginArgs = pluginPart.split(this.config.separator)
+        let params, pluginName, plugin
+        params = pluginPart.split(this.config.separator)
         pluginName = pluginPart.shift()
         plugin = this.config.plugins[pluginName]
-        if (plugin) return plugin(pluginArgs)
+        if (plugin) return plugin.call(this, { params: params, raw: params.join(this.config.separator) })
         if (!this.config.skipWords) console.log(`Unsupported plugin name('${pluginName}') in '${className}'`)
     }
 }
