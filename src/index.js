@@ -2,25 +2,41 @@ class Processor {
     constructor(input, config) {
         this.input = input
         this.config = config
+        this.styleSheet = new Map()
+    }
+    
+    generate() {
+        for (className of classNames) {
+            this.processUtil(className)
+        }
+    }
+    
+    process(classNames) {
+        let className
+        for (className of classNames) {
+            this.processUtil(className)
+        }
+        return this.generate()
     }
     
     processUtil(className) {
-        let varaintNames, pluginPart, styles
-        varaintNames = className.split(this.config.variantsSeparator)
-        pluginPart = varaintNames.pop()
+        let variantNames, pluginPart, styles
+        variantNames = className.split(this.config.variantsSeparator)
+        pluginPart = variantNames.pop()
         if (this.config.prefix) {
             if (pluginPart.startsWith(this.config.prefix)) pluginPart = pluginPart.slice(this.config.prefix.length)
             else return
         }
         styles = this.processPlugins(pluginPart, className)
-        
+        this.processVariants(variantNames, styles)
     }
     
     processVariants(variantNames, styles) {
         let variantName, variant, styleSheet
+        styleSheet = this.styleSheet
         for (variantName of variantNames) {
             variant = this.config.variants[variantName]
-            variant.call(this, styles)
+            styles = variant.call(this, styles)
             if (!styleSheet.has(variantName)) styleSheet.set(variantName, new Map())
             styleSheet = styleSheet.get(variantName)
         }
