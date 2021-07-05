@@ -1,1217 +1,1153 @@
-"use strict";Object.defineProperty(exports, "__esModule", {value: true}); function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; } function _nullishCoalesce(lhs, rhsFn) { if (lhs != null) { return lhs; } else { return rhsFn(); } } function _optionalChain(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }var _tools = require('../utils/tools');
-var _helpers = require('../utils/helpers');
-var _style = require('../utils/style');
-var _variants2 = require('./variants');
-var _utilities = require('./utilities');
-var _handler2 = require('./utilities/handler');
-var _extract = require('./extract'); var _extract2 = _interopRequireDefault(_extract);
-var _test = require('./test'); var _test2 = _interopRequireDefault(_test);
-var _preflight = require('./preflight'); var _preflight2 = _interopRequireDefault(_preflight);
-var _index = require('../plugin/index'); var _index2 = _interopRequireDefault(_index);
-var _config2 = require('../config');
-var _sortStyle = require('../utils/algorithm/sortStyle');
-var _order = require('../config/order');
-var _cssEscape = require('../utils/algorithm/cssEscape'); var _cssEscape2 = _interopRequireDefault(_cssEscape);
-var _diffConfig = require('../utils/algorithm/diffConfig'); var _diffConfig2 = _interopRequireDefault(_diffConfig);
-var _combineConfig = require('../utils/algorithm/combineConfig'); var _combineConfig2 = _interopRequireDefault(_combineConfig);
-var _class = require('../utils/parser/class'); var _class2 = _interopRequireDefault(_class);
+import { getNestedValue, hash, deepCopy, testRegexr, guessClassName, toArray } from '../utils/tools';
+import { negative, breakpoints } from '../utils/helpers';
+import { Keyframes, Container, Property, Style, StyleSheet } from '../utils/style';
+import { resolveVariants } from './variants';
+import { staticUtilities, dynamicUtilities } from './utilities';
+import { createHandler } from './utilities/handler';
+import extract, { generateStaticStyle } from './extract';
+import test from './test';
+import preflight from './preflight';
+import plugin from '../plugin/index';
+import { baseConfig } from '../config';
+import { sortGroup } from '../utils/algorithm/sortStyle';
+import { layerOrder, pluginOrder } from '../config/order';
+import cssEscape from '../utils/algorithm/cssEscape';
+import diffConfig from '../utils/algorithm/diffConfig';
+import combineConfig from '../utils/algorithm/combineConfig';
+import ClassParser from '../utils/parser/class';
 // @ts-expect-error no types
-var _tosource = require('tosource'); var _tosource2 = _interopRequireDefault(_tosource);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- class Processor {
-  
-  
-   __init() {this._variants = {}}
-   __init2() {this._cache = {
-    html: [],
-    attrs: [],
-    classes: [],
-    utilities: [],
-    variants: [],
-  }}
-  
-   __init3() {this._plugin = {
-    static: {},
-    dynamic: {},
-    utilities: {},
-    components: {},
-    preflights: {},
-    shortcuts: {},
-    alias: {},
-    completions: {},
-  }}
-
-   __init4() {this.pluginUtils = {
-    addDynamic: (...args) => this.addDynamic(...args),
-    addUtilities: (...args) => this.addUtilities(...args),
-    addComponents: (...args) => this.addComponents(...args),
-    addBase: (...args) => this.addBase(...args),
-    addVariant: (...args) => this.addVariant(...args),
-    e: (...args) => this.e(...args),
-    prefix: (...args) => this.prefix(...args),
-    config: (...args) => this.config(...args),
-    theme: (...args) => this.theme(...args),
-    variants: (...args) => this.variants(...args),
-  }}
-
-   __init5() {this.variantUtils = {
-    modifySelectors: (modifier) =>
-      new (0, _style.Style)().wrapSelector((selector) =>
-        modifier({
-          className: /^[.#]/.test(selector) ? selector.substring(1) : selector,
-        })),
-    atRule: (name) => new (0, _style.Style)().atRule(name),
-    pseudoClass: (name) => new (0, _style.Style)().pseudoClass(name),
-    pseudoElement: (name) => new (0, _style.Style)().pseudoElement(name),
-    parent: (name) => new (0, _style.Style)().parent(name),
-    child: (name) => new (0, _style.Style)().child(name),
-  }}
-
-  constructor(config) {;Processor.prototype.__init.call(this);Processor.prototype.__init2.call(this);Processor.prototype.__init3.call(this);Processor.prototype.__init4.call(this);Processor.prototype.__init5.call(this);
-    this._config = this.resolveConfig(config, _config2.baseConfig);
-    this._theme = this._config.theme;
-    this._handler = _handler2.createHandler.call(void 0, this._config.handlers);
-    this._config.shortcuts && this.loadShortcuts(this._config.shortcuts);
-    this._config.alias && this.loadAlias(this._config.alias);
-  }
-
-   _resolveConfig(userConfig, presets = {}) {
-    if (userConfig.presets) {
-      const resolved = this._resolvePresets(userConfig.presets);
-      presets = this._resolveConfig(resolved, presets);
-      delete userConfig.presets;
+import toSource from 'tosource';
+export class Processor {
+    constructor(config) {
+        this._variants = {};
+        this._cache = {
+            html: [],
+            attrs: [],
+            classes: [],
+            utilities: [],
+            variants: [],
+        };
+        this._plugin = {
+            static: {},
+            dynamic: {},
+            utilities: {},
+            components: {},
+            preflights: {},
+            shortcuts: {},
+            alias: {},
+            completions: {},
+        };
+        this.pluginUtils = {
+            addDynamic: (...args) => this.addDynamic(...args),
+            addUtilities: (...args) => this.addUtilities(...args),
+            addComponents: (...args) => this.addComponents(...args),
+            addBase: (...args) => this.addBase(...args),
+            addVariant: (...args) => this.addVariant(...args),
+            e: (...args) => this.e(...args),
+            prefix: (...args) => this.prefix(...args),
+            config: (...args) => this.config(...args),
+            theme: (...args) => this.theme(...args),
+            variants: (...args) => this.variants(...args),
+        };
+        this.variantUtils = {
+            modifySelectors: (modifier) => new Style().wrapSelector((selector) => modifier({
+                className: /^[.#]/.test(selector) ? selector.substring(1) : selector,
+            })),
+            atRule: (name) => new Style().atRule(name),
+            pseudoClass: (name) => new Style().pseudoClass(name),
+            pseudoElement: (name) => new Style().pseudoElement(name),
+            parent: (name) => new Style().parent(name),
+            child: (name) => new Style().child(name),
+        };
+        this._config = this.resolveConfig(config, baseConfig);
+        this._theme = this._config.theme;
+        this._handler = createHandler(this._config.handlers);
+        this._config.shortcuts && this.loadShortcuts(this._config.shortcuts);
+        this._config.alias && this.loadAlias(this._config.alias);
     }
-    const userTheme = userConfig.theme;
-    if (userTheme) delete userConfig.theme;
-    const extendTheme = userTheme && 'extend' in userTheme ? _nullishCoalesce(userTheme.extend, () => ( {})) : {};
-    const theme = (presets.theme || {}) ;
-    if (userTheme) {
-      if ('extend' in userTheme) delete userTheme.extend;
-      for (const [key, value] of Object.entries(userTheme)) {
-        theme[key] = typeof value === 'function' ? value : { ...value };
-      }
-    }
-    if (extendTheme && typeof extendTheme === 'object') this._reduceFunction(theme, extendTheme);
-    return { ...presets, ...userConfig, theme };
-  }
-
-   _reduceFunction(theme, extendTheme) {
-    for (const [key, value] of Object.entries(extendTheme)) {
-      const themeValue = theme[key];
-      switch (typeof themeValue) {
-      case 'function':
-        theme[key] = (theme, { negative, breakpoints }) => _combineConfig2.default.call(void 0, 
-          (themeValue )(theme, { negative, breakpoints }),
-          (typeof value === 'function' ? value(theme, { negative, breakpoints }) : _nullishCoalesce(value, () => ( {}))),
-        );
-        break;
-      case 'object':
-        theme[key] = (theme, { negative, breakpoints }) => _combineConfig2.default.call(void 0, themeValue, (typeof value === 'function' ? value(theme, { negative, breakpoints }) : _nullishCoalesce(value, () => ( {}))));
-        break;
-      default:
-        theme[key] = value;
-      }
-    }
-  }
-
-   _resolvePresets(presets) {
-    let config = {};
-    const extend = {};
-    presets.forEach(p => {
-      if (p.theme && 'extend' in p.theme && p.theme.extend) {
-        this._reduceFunction(extend, p.theme.extend);
-        delete p.theme.extend;
-      }
-      config = this._resolveConfig(p, config);
-    });
-    if (config.theme) {
-      (config.theme ).extend = extend;
-    } else {
-      config.theme = { extend };
-    }
-    return config;
-  }
-
-   _resolveFunction(config) {
-    if (!config.theme) return config;
-    const theme = (path, defaultValue) => this.theme(path, defaultValue);
-    for (const dict of [config.theme, 'extend' in config.theme ? _nullishCoalesce(config.theme.extend, () => ( {})) : {}]) {
-      for (const [key, value] of Object.entries(dict)) {
-        if (typeof value === 'function') {
-          (dict )[key] = value(theme, {
-            negative: _helpers.negative,
-            breakpoints: _helpers.breakpoints,
-          }) ;
+    _resolveConfig(userConfig, presets = {}) {
+        if (userConfig.presets) {
+            const resolved = this._resolvePresets(userConfig.presets);
+            presets = this._resolveConfig(resolved, presets);
+            delete userConfig.presets;
         }
-      }
-    }
-    return config;
-  }
-
-   _replaceStyleVariants(styles) {
-    // @screen sm -> @screen (min-width: 640px)
-    styles.forEach(style => {
-      style.atRules = _optionalChain([style, 'access', _ => _.atRules, 'optionalAccess', _2 => _2.map, 'call', _3 => _3(i => {
-        if (i.match(/@screen/)) {
-          const variant = i.replace(/\s*@screen\s*/, '');
-          const atRule = _optionalChain([this, 'access', _4 => _4._variants, 'access', _5 => _5[variant], 'call', _6 => _6(), 'access', _7 => _7.atRules, 'optionalAccess', _8 => _8[0]]);
-          return _nullishCoalesce(atRule, () => ( i));
-        }
-        return i;
-      })]);
-    });
-  }
-
-   _addPluginProcessorCache(type, key, styles) {
-    styles = _tools.toArray.call(void 0, styles);
-    this._plugin[type][key] = key in this._plugin[type]
-      ? [...this._plugin[type][key], ...styles]
-      : styles;
-  }
-
-   _loadVariables() {
-    const config = this.theme('vars') ;
-    if (!config) return;
-    this.addBase({ ':root': Object.assign({}, ...Object.keys(config).map(i => ({ [`--${i}`]: config[i] })))  });
-  }
-
-  loadConfig(config) {
-    this._config = this.resolveConfig(config, _config2.baseConfig);
-    this._theme = this._config.theme;
-    this._handler = _handler2.createHandler.call(void 0, this._config.handlers);
-    this._config.shortcuts && this.loadShortcuts(this._config.shortcuts);
-    this._config.alias && this.loadAlias(this._config.alias);
-    return this._config;
-  }
-
-  resolveConfig(config, presets) {
-    this._config = this._resolveConfig({ ..._tools.deepCopy.call(void 0, config ? config : {}), exclude: _optionalChain([config, 'optionalAccess', _9 => _9.exclude]) }, _tools.deepCopy.call(void 0, presets)); // deep copy
-    this._theme = this._config.theme; // update theme to make sure theme() function works.
-    _optionalChain([this, 'access', _10 => _10._config, 'access', _11 => _11.plugins, 'optionalAccess', _12 => _12.map, 'call', _13 => _13(i => typeof i === 'function' ? ('__isOptionsFunction' in i ? this.loadPluginWithOptions(i): this.loadPlugin(_index2.default.call(void 0, i))) : this.loadPlugin(i))]);
-    this._config = this._resolveFunction(this._config);
-    this._variants = { ...this._variants, ... this.resolveVariants() };
-    this._cache.variants = Object.keys(this._variants);
-    this._loadVariables();
-    if (this._config.corePlugins) this._plugin.core = Array.isArray(this._config.corePlugins) ? Object.assign({}, ...(this._config.corePlugins ).map(i => ({ [i]: true }))) : { ...Object.assign({}, ...Object.keys(_order.pluginOrder).slice(Object.keys(_order.pluginOrder).length/2).map(i => ({ [i]: true }))), ...this._config.corePlugins };
-    return this._config;
-  }
-
-  resolveVariants(
-    type
-  ) {
-    const variants = _variants2.resolveVariants.call(void 0, this._config);
-    if (type) {
-      return variants[type];
-    }
-    return { ...variants.screen, ...variants.theme, ...variants.state };
-  }
-
-  resolveStaticUtilities(includePlugins = false) {
-    const staticStyles = {};
-    for (const key in _utilities.staticUtilities) {
-      const style = _extract.generateStaticStyle.call(void 0, this, key, true);
-      if (style) staticStyles[key] = [ style ];
-    }
-    if (!includePlugins) return staticStyles;
-    return { ...staticStyles, ...this._plugin.utilities, ...this._plugin.components };
-  }
-
-  resolveDynamicUtilities(includePlugins = false) {
-    if (!includePlugins) return _utilities.dynamicUtilities;
-    return { ..._utilities.dynamicUtilities, ...this._plugin.dynamic };
-  }
-
-  get allConfig() {
-    return this._config ;
-  }
-
-  get allTheme() {
-    return (_nullishCoalesce(this._theme, () => ( {}))) ;
-  }
-
-  get allVariant() {
-    return this._cache.variants;
-  }
-
-  wrapWithVariants(variants, styles) {
-    // apply variant to style
-    if (!Array.isArray(styles)) styles = [styles];
-    if (variants.length === 0) return styles;
-
-    return styles.map(style => {
-      if (style instanceof _style.Keyframes) return style;
-      const atrules = [];
-      let wrapped = variants
-        .map(i => this._variants[i]())
-        .reduce((previousValue, currentValue) => {
-          const output = previousValue.extend(currentValue);
-          if (previousValue.isAtrule) atrules.push((previousValue.atRules )[0]);
-          return output;
-        }, new (0, _style.Style)())
-        .extend(style);
-      if (style instanceof _style.Container) wrapped = new (0, _style.Container)().extend(wrapped);
-      if (atrules.length > 0) wrapped.meta.variants = atrules;
-      return wrapped;
-    });
-  }
-
-  removePrefix(className) {
-    const prefix = this.config('prefix') ;
-    return prefix ? className.replace(new RegExp(`^${prefix}`), '') : className;
-  }
-
-  markAsImportant(style, force = false) {
-    const _important = force ? force : this.config('important', false);
-    const important = typeof _important === 'string' ? (_important ) : (_important );
-    if (important) {
-      if (typeof important === 'string') {
-        style.parent(important);
-      } else {
-        style.important = true;
-        style.property.forEach(i => i.important = true);
-      }
-    }
-    return style;
-  }
-
-  extract(className, addComment = false, prefix) {
-    return _extract2.default.call(void 0, this, className, addComment, prefix);
-  }
-
-  test(className, prefix) {
-    return _test2.default.call(void 0, this, className, prefix);
-  }
-
-  preflight(
-    html,
-    includeBase = true,
-    includeGlobal = true,
-    includePlugins = true,
-    ignoreProcessed = false
-  ) {
-    let id;
-    if (html) {
-      id = _tools.hash.call(void 0, html);
-      if (ignoreProcessed && this._cache.html.includes(id)) return new (0, _style.StyleSheet)();
-    }
-    id && ignoreProcessed && this._cache.html.push(id);
-    return _preflight2.default.call(void 0, this, html, includeBase, includeGlobal, includePlugins);
-  }
-
-  interpret(
-    classNames,
-    ignoreProcessed = false,
-    handleIgnored
-  ) {
-    const ast = new (0, _class2.default)(classNames, this.config('separator', ':') , this._cache.variants).parse();
-    const success = [];
-    const ignored = [];
-    const styleSheet = new (0, _style.StyleSheet)();
-
-    const _hIgnored = (className) => {
-      if (handleIgnored) {
-        const style = handleIgnored(className);
-        if (style) {
-          styleSheet.add(style);
-          success.push(className);
-        } else {
-          ignored.push(className);
-        }
-      }
-      ignored.push(className);
-    };
-
-    const _gStyle = (
-      baseClass,
-      variants,
-      selector,
-      important = false,
-      prefix,
-    ) => {
-      if (this._config.exclude && _tools.testRegexr.call(void 0, selector, this._config.exclude)) {
-        // filter exclude className
-        ignored.push(selector);
-        return;
-      }
-      if (variants[0] && selector in { ...this._plugin.utilities, ...this._plugin.components }) {
-        // handle special selector that conflict with class parser, such as 'hover:abc'
-        success.push(selector);
-        styleSheet.add(_tools.deepCopy.call(void 0, this._plugin.utilities[selector]));
-        return;
-      }
-      let result = this.extract(baseClass, false, prefix);
-      if (result) {
-        const escapedSelector = '.' + _cssEscape2.default.call(void 0, selector);
-        if (result instanceof _style.Style) {
-          if(!result.meta.respectSelector) result.selector = escapedSelector;
-          this.markAsImportant(result, important);
-        } else if (Array.isArray(result)) {
-          result = result.map(i => {
-            if (i instanceof _style.Keyframes) return i;
-            if(!i.meta.respectSelector) i.selector = escapedSelector;
-            this.markAsImportant(i, important);
-            return i;
-          });
-        }
-        const wrapped = this.wrapWithVariants(variants, result);
-        if (wrapped) {
-          success.push(selector);
-          styleSheet.add(wrapped);
-        } else {
-          _hIgnored(selector);
-        }
-      } else {
-        _hIgnored(selector);
-      }
-    };
-
-    const _hGroup = (obj, parentVariants = []) => {
-      const _eval = (u) => {
-        if (u.type === 'group') {
-          _hGroup(u, obj.variants);
-        } else if (u.type === 'alias' && (u.content ) in this._plugin.alias) {
-          this._plugin.alias[u.content ].forEach(i => _eval(i));
-        } else {
-          // utility
-          const variants = [
-            ...parentVariants,
-            ...obj.variants,
-            ...u.variants,
-          ];
-          const important = obj.important || u.important;
-          const selector = (important ? '!' : '') + [...variants, u.content].join(':');
-          typeof u.content === 'string' &&
-            _gStyle(u.content, variants, selector, important, this.config('prefix') );
-        }
-      };
-      Array.isArray(obj.content) && obj.content.forEach(u => _eval(u));
-    };
-
-    const _gAst = (ast) => {
-      ast.forEach(obj => {
-        if (!(ignoreProcessed && this._cache.utilities.includes(obj.raw))) {
-          if (ignoreProcessed) this._cache.utilities.push(obj.raw);
-          if (obj.type === 'utility') {
-            if (Array.isArray(obj.content)) {
-              // #functions stuff
-            } else if (obj.content) {
-              _gStyle(obj.content, obj.variants, obj.raw, obj.important, this.config('prefix') );
+        const userTheme = userConfig.theme;
+        if (userTheme)
+            delete userConfig.theme;
+        const extendTheme = userTheme && 'extend' in userTheme ? userTheme.extend ?? {} : {};
+        const theme = (presets.theme || {});
+        if (userTheme) {
+            if ('extend' in userTheme)
+                delete userTheme.extend;
+            for (const [key, value] of Object.entries(userTheme)) {
+                theme[key] = typeof value === 'function' ? value : { ...value };
             }
-          } else if (obj.type === 'group') {
-            _hGroup(obj);
-          } else if (obj.type === 'alias' && (obj.content ) in this._plugin.alias) {
-            _gAst(this._plugin.alias[obj.content ]);
-          } else {
-            _hIgnored(obj.raw);
-          }
         }
-      });
-    };
-
-    _gAst(ast);
-
-    if (!this.config('prefixer')) styleSheet.prefixer = false;
-
-    return {
-      success,
-      ignored,
-      styleSheet: styleSheet.sort(),
-    };
-  }
-
-  validate(classNames) {
-    const ast = new (0, _class2.default)(classNames, this.config('separator', ':') , this._cache.variants).parse();
-    const success = [];
-    const ignored = [];
-
-    const _hSuccess = (className, self, parent) => {
-      success.push({
-        className,
-        ...self,
-        parent,
-      });
-    };
-
-    const _hIgnored = (className, self, parent) => {
-      ignored.push({
-        className,
-        ...self,
-        parent,
-      });
-    };
-
-    const _gStyle = (
-      baseClass,
-      variants,
-      selector,
-      self,
-      parent,
-      prefix,
-    ) => {
-      if (this._config.exclude && _tools.testRegexr.call(void 0, selector, this._config.exclude)) {
-        // filter exclude className
-        _hIgnored(selector, self, parent);
-        return;
-      }
-      if (variants[0] && selector in { ...this._plugin.utilities, ...this._plugin.components }) {
-        // handle special selector that conflict with class parser, such as 'hover:abc'
-        _hSuccess(selector, self, parent);
-        return;
-      }
-      if (this.test(baseClass, prefix) && variants.filter(i => !(i in this._variants)).length === 0) {
-        _hSuccess(selector, self, parent);
-      } else {
-        _hIgnored(selector, self, parent);
-      }
-    };
-
-    const _hGroup = (obj, parentVariants = []) => {
-      const _eval = (u, parent) => {
-        if (u.type === 'group') {
-          _hGroup(u, obj.variants);
-        } else if (u.type === 'alias' && (u.content ) in this._plugin.alias) {
-          this._plugin.alias[u.content ].forEach(i => _eval(i, u));
-        } else {
-          // utility
-          const variants = [
-            ...parentVariants,
-            ...obj.variants,
-            ...u.variants,
-          ];
-          const important = obj.important || u.important;
-          const selector = (important ? '!' : '') + [...variants, u.content].join(':');
-          typeof u.content === 'string' &&
-            _gStyle(u.content, variants, selector, u, parent, this.config('prefix') );
-        }
-      };
-      Array.isArray(obj.content) && obj.content.forEach(u => _eval(u, obj));
-    };
-
-    const _gAst = (ast) => {
-      ast.forEach(obj => {
-        if (obj.type === 'utility') {
-          if (Array.isArray(obj.content)) {
-            // #functions stuff
-          } else if (obj.content) {
-            _gStyle(obj.content, obj.variants, obj.raw, obj, undefined, this.config('prefix') );
-          }
-        } else if (obj.type === 'group') {
-          _hGroup(obj);
-        } else if (obj.type === 'alias' && (obj.content ) in this._plugin.alias) {
-          _gAst(this._plugin.alias[obj.content ]);
-        } else {
-          _hIgnored(obj.raw, obj);
-        }
-      });
-    };
-
-    _gAst(ast);
-
-    return {
-      success,
-      ignored,
-    };
-  }
-
-  compile(
-    classNames,
-    prefix = 'windi-',
-    showComment = false,
-    ignoreGenerated = false,
-    handleIgnored,
-    outputClassName
-  )
-
-
-
-
- {
-    const ast = new (0, _class2.default)(classNames, this.config('separator', ':') , this._cache.variants).parse();
-    const success = [];
-    const ignored = [];
-    const styleSheet = new (0, _style.StyleSheet)();
-    let className = _nullishCoalesce(outputClassName, () => ( prefix + _tools.hash.call(void 0, classNames.trim().split(/\s+/g).join(' '))));
-    if (ignoreGenerated && this._cache.classes.includes(className)) return { success, ignored, styleSheet, className };
-    const buildSelector = '.' + className;
-
-    const _hIgnored = (className) => {
-      if (handleIgnored) {
-        const style = handleIgnored(className);
-        if (style) {
-          styleSheet.add(style);
-          success.push(className);
-        } else {
-          ignored.push(className);
-        }
-      }
-      ignored.push(className);
-    };
-
-    const _gStyle = (
-      baseClass,
-      variants,
-      selector,
-      important = false
-    ) => {
-      if (this._config.exclude && _tools.testRegexr.call(void 0, selector, this._config.exclude)) {
-        // filter exclude className
-        ignored.push(selector);
-        return;
-      }
-      if (variants[0] && selector in { ...this._plugin.utilities, ...this._plugin.components }) {
-        // handle special selector that conflict with class parser, such as 'hover:abc'
-        success.push(selector);
-        styleSheet.add(_tools.deepCopy.call(void 0, this._plugin.utilities[selector]));
-        return;
-      }
-      const result = this.extract(baseClass, showComment);
-      if (result) {
-        if (Array.isArray(result)) {
-          result.forEach(i => {
-            if (i instanceof _style.Keyframes) {
-              i.meta.order = 20;
-              return i;
-            }
-            i.selector = buildSelector;
-            this.markAsImportant(i, important);
-          });
-        } else {
-          result.selector = buildSelector;
-          this.markAsImportant(result, important);
-        }
-        const wrapped = this.wrapWithVariants(variants, result);
-        if (wrapped) {
-          success.push(selector);
-          styleSheet.add(wrapped);
-        } else {
-          _hIgnored(selector);
-        }
-      } else {
-        _hIgnored(selector);
-      }
-    };
-
-    const _hGroup = (obj, parentVariants = []) => {
-      Array.isArray(obj.content) &&
-        obj.content.forEach((u) => {
-          if (u.type === 'group') {
-            _hGroup(u, obj.variants);
-          } else {
-            // utility
-            const variants = [
-              ...parentVariants,
-              ...obj.variants,
-              ...u.variants,
-            ];
-            const selector = [...variants, u.content].join(':');
-            typeof u.content === 'string' &&
-              _gStyle(this.removePrefix(u.content), variants, selector, obj.important || u.important);
-          }
-        });
-    };
-
-    ast.forEach((obj) => {
-      if (obj.type === 'utility') {
-        if (Array.isArray(obj.content)) {
-          // #functions stuff
-        } else if (obj.content) {
-          _gStyle(this.removePrefix(obj.content), obj.variants, obj.raw, obj.important);
-        }
-      } else if (obj.type === 'group') {
-        _hGroup(obj);
-      } else {
-        _hIgnored(obj.raw);
-      }
-    });
-
-    className = success.length > 0 ? className : undefined;
-    if (ignoreGenerated && className) this._cache.classes.push(className);
-    if (!this.config('prefixer')) styleSheet.prefixer = false;
-    return {
-      success,
-      ignored,
-      className,
-      styleSheet: styleSheet.sortby(_sortStyle.sortGroup).combine(),
-    };
-  }
-
-  attributify(attrs, ignoreProcessed = false) {
-    const success = [];
-    const ignored = [];
-    const styleSheet = new (0, _style.StyleSheet)();
-    const { prefix, separator, disable } = (this._config.attributify && typeof this._config.attributify === 'boolean') ? {} : this._config.attributify || {};
-
-    const _gStyle = (
-      key,
-      value,
-      equal = false,
-      notAllow = false,
-      ignoreProcessed = false,
-    ) => {
-      const buildSelector = `[${this.e((prefix || '') + key)}${equal?'=':'~='}"${value}"]`;
-      if (notAllow || (ignoreProcessed && this._cache.attrs.includes(buildSelector))) {
-        ignored.push(buildSelector);
-        return;
-      }
-      const importantValue = value.startsWith('!');
-      if (importantValue) value = value.slice(1);
-      const importantKey = key.startsWith('!');
-      if (importantKey) key = key.slice(1);
-      const id = _nullishCoalesce(_optionalChain([key, 'access', _14 => _14.match, 'call', _15 => _15(/\w+$/), 'optionalAccess', _16 => _16[0]]), () => ( ''));
-      const splits = value.split(separator || ':');
-      let variants = splits.slice(0, -1);
-      let utility = splits.slice(-1)[0];
-      let keys = key.split(separator || ':');
-      const lastKey = keys.slice(-1)[0];
-
-      if (lastKey in this._variants && lastKey !== 'svg') {
-        variants = [...keys, ...variants];
-      } else if (id in this._variants && id !== 'svg') {
-        // sm = ... || sm:hover = ... || sm-hover = ...
-        const matches = key.match(/[@<\w]+/g);
-        if (!matches) {
-          ignored.push(buildSelector);
-          return;
-        }
-        variants = [...matches, ...variants];
-      } else {
-        // text = ... || sm:text = ... || sm-text = ... || sm-hover-text = ...
-        if (!keys) {
-          ignored.push(buildSelector);
-          return;
-        }
-        if (keys.length === 1) keys = key.split('-');
-        let last;
-        // handle min-h || max-w ...
-        if (['min', 'max'].includes(keys.slice(-2, -1)[0])) {
-          variants = [...keys.slice(0, -2), ...variants];
-          last = keys.slice(-2,).join('-');
-        } else {
-          variants = [...keys.slice(0, -1), ...variants];
-          last = keys[keys.length - 1];
-        }
-        // handle negative, such as m = -x-2
-        const negative = utility.charAt(0) === '-';
-        if (negative) utility = utility.slice(1,);
-        utility = ['m', 'p'].includes(last) && ['t', 'l', 'b', 'r', 'x', 'y'].includes(utility.charAt(0)) ? last + utility : last + '-' + utility;
-        if (negative) utility = '-' + utility;
-        utility !== 'cursor-default' && (utility = utility.replace(/-(~|default)$/, ''));
-        // handle special cases
-        switch(last) {
-        case 'w':
-          if (['w-min', 'w-max', 'w-min-content', 'w-max-content'].includes(utility)) {
-            utility = utility.slice(0, 5);
-          } else if (utility.startsWith('w-min')) {
-            utility = 'min-w' + utility.slice(5);
-          } else if (utility.startsWith('w-max')) {
-            utility = 'max-w' + utility.slice(5);
-          }
-          break;
-        case 'h':
-          if (['h-min', 'h-max', 'h-min-content', 'h-max-content'].includes(utility)) {
-            utility = utility.slice(0, 5);
-          } else if (utility.startsWith('h-min')) {
-            utility = 'min-h' + utility.slice(5);
-          } else if (utility.startsWith('h-max')) {
-            utility = 'max-h' + utility.slice(5);
-          }
-          break;
-        case 'flex':
-          switch (utility) {
-          case 'flex-default':
-            utility = 'flex';
-            break;
-          case 'flex-inline':
-            utility = 'inline-flex';
-            break;
-          }
-          break;
-        case 'grid':
-          switch(utility) {
-          case 'grid-default':
-            utility = 'grid';
-            break;
-          case 'grid-inline':
-            utility = 'inline-grid';
-            break;
-          default:
-            if (/^grid-(auto|gap|col|row)-/.test(utility)) utility = utility.slice(5);
-          }
-          break;
-        case 'justify':
-          if (utility.startsWith('justify-content-')) {
-            utility = 'justify-' + utility.slice(16);
-          }
-          break;
-        case 'align':
-          if (/^align-(items|self|content)-/.test(utility)) {
-            utility = utility.slice(6);
-          } else {
-            utility = 'content-' + utility.slice(6);
-          }
-          break;
-        case 'place':
-          if (!/^place-(items|self|content)-/.test(utility)) {
-            utility = 'place-content-' + utility.slice(6);
-          }
-          break;
-        case 'font':
-          if (/^font-(tracking|leading)-/.test(utility) || ['font-italic', 'font-not-italic', 'font-antialiased', 'font-subpixel-antialiased', 'font-normal-nums', 'font-ordinal', 'font-slashed-zero', 'font-lining-nums', 'font-oldstyle-nums', 'font-proportional-nums', 'font-tabular-nums', 'font-diagonal-fractions', 'font-stacked-fractions'].includes(utility))
-            utility = utility.slice(5);
-          break;
-        case 'text':
-          if (['text-baseline', 'text-top', 'text-middle', 'text-bottom', 'text-text-top', 'text-text-bottom'].includes(utility)) {
-            utility = 'align-' + utility.slice(5);
-          } else if (utility.startsWith('text-placeholder') || utility.startsWith('text-underline') || utility.startsWith('text-tab') || utility.startsWith('text-indent') || utility.startsWith('text-hyphens') || utility.startsWith('text-write')) {
-            utility = utility.slice(5);
-          } else if (['text-underline', 'text-line-through', 'text-no-underline', 'text-uppercase', 'text-lowercase', 'text-capitalize', 'text-normal-case', 'text-truncate', 'text-overflow-ellipsis', 'text-overflow-clip', 'text-break-normal', 'text-break-words', 'text-break-all'].includes(utility)) {
-            utility = utility.slice(5);
-          } else if (utility.startsWith('text-space')) {
-            utility = 'white' + utility.slice(5);
-          }
-          break;
-        case 'underline':
-          if (utility === 'underline-none') {
-            utility = 'no-underline';
-          } else if (utility === 'underline-line-through') {
-            utility = 'line-through';
-          }
-          break;
-        case 'svg':
-          if (utility.startsWith('svg-fill') || utility.startsWith('svg-stroke')) utility = utility.slice(4);
-          break;
-        case 'border':
-          if (utility.startsWith('border-rounded')) {
-            utility = utility.slice(7);
-          }
-          break;
-        case 'gradient':
-          if (utility === 'gradient-none') {
-            utility = 'bg-none';
-          } else if (/^gradient-to-[trbl]{1,2}$/.test(utility)) {
-            utility = 'bg-' + utility;
-          } else if (/^gradient-(from|via|to)-/.test(utility)) {
-            utility = utility.slice(9);
-          }
-          break;
-        case 'display':
-          utility = utility.slice(8);
-          break;
-        case 'pos':
-          utility = utility.slice(4);
-          break;
-        case 'position':
-          utility = utility.slice(9);
-          break;
-        case 'box':
-          if (/^box-(decoration|shadow)/.test(utility)) {
-            utility = utility.slice(4,);
-          }
-          break;
-        case 'filter':
-          if (utility !== 'filter-none' && utility !== 'filter') {
-            utility = utility.slice(7);
-          }
-          break;
-        case 'backdrop':
-          if (utility === 'backdrop') {
-            utility = 'backdrop-filter';
-          } else if (utility === 'backdrop-none') {
-            utility = 'backdrop-filter-none';
-          }
-          break;
-        case 'transition':
-          if (/transition-(duration|ease|delay)-/.test(utility)) {
-            utility = utility.slice(11);
-          }
-          break;
-        case 'transform':
-          if (!['transform-gpu', 'transform-none', 'transform'].includes(utility)) {
-            utility = utility.slice(10);
-          }
-          break;
-        case 'isolation':
-          if (utility === 'isolation-isolate') utility = 'isolate';
-          break;
-        case 'table':
-          if (utility === 'table-inline') {
-            utility = 'inline-table';
-          } else if (utility.startsWith('table-caption-') || utility.startsWith('table-empty-cells')) {
-            utility = utility.slice(6);
-          }
-          break;
-        case 'pointer':
-          utility = 'pointer-events' + utility.slice(7);
-          break;
-        case 'resize':
-          if (utility === 'resize-both') utility = 'resize';
-          break;
-        case 'ring':
-          break;
-        case 'blend':
-          utility = 'mix-' + utility;
-          break;
-        case 'sr':
-          if (utility === 'sr-not-only') utility = 'not-sr-only';
-          break;
-        }
-      }
-      const style = this.extract(utility, false);
-      if (style) {
-        const important = importantKey || importantValue;
-        if (Array.isArray(style)) {
-          style.forEach(i => {
-            if (i instanceof _style.Keyframes) return i;
-            i.selector = buildSelector;
-            this.markAsImportant(i, important);
-          });
-        } else {
-          style.selector = buildSelector;
-          this.markAsImportant(style, important);
-        }
-        if (variants.find(i => !(i in this._variants))) {
-          ignored.push(buildSelector);
-        } else {
-          const wrapped = this.wrapWithVariants(variants, style);
-          if (wrapped) {
-            ignoreProcessed && this._cache.attrs.push(buildSelector);
-            success.push(buildSelector);
-            styleSheet.add(wrapped);
-          } else {
-            ignored.push(buildSelector);
-          }
-        }
-      } else {
-        ignored.push(buildSelector);
-      }
-    };
-
-    // eslint-disable-next-line prefer-const
-    for (let [key, value] of Object.entries(attrs)) {
-      let notAllow = false;
-      if (prefix) {
-        if (key.startsWith(prefix)) {
-          key = key.slice(prefix.length);
-        } else {
-          notAllow = true;
-        }
-      }
-      if (_optionalChain([disable, 'optionalAccess', _17 => _17.includes, 'call', _18 => _18(key)])) notAllow = true;
-      if (Array.isArray(value)) {
-        value.forEach(i => _gStyle(key, i, false, notAllow, ignoreProcessed));
-      } else {
-        _gStyle(key, value, true, notAllow, ignoreProcessed);
-      }
+        if (extendTheme && typeof extendTheme === 'object')
+            this._reduceFunction(theme, extendTheme);
+        return { ...presets, ...userConfig, theme };
     }
-
-    return {
-      success,
-      ignored,
-      styleSheet: styleSheet.sort().combine(),
-    };
-  }
-
-  loadPlugin({
-    handler,
-    config,
-  }) {
-    if (config) {
-      config = this._resolveFunction(config);
-      config = _combineConfig2.default.call(void 0, 
-        config ,
-        this._config 
-      );
-      const pluginTheme = config.theme ;
-      const extendTheme = _optionalChain([pluginTheme, 'optionalAccess', _19 => _19.extend]) ;
-      if (pluginTheme && extendTheme && typeof extendTheme === 'object') {
+    _reduceFunction(theme, extendTheme) {
         for (const [key, value] of Object.entries(extendTheme)) {
-          const themeValue = pluginTheme[key];
-          if (themeValue && typeof themeValue === 'object') {
-            pluginTheme[key] = { ...(_nullishCoalesce(themeValue, () => ( {}))), ...value  };
-          } else if (value && typeof value === 'object' ){
-            pluginTheme[key] = value ;
-          }
-        }
-      }
-      this._config = { ...config, theme: pluginTheme };
-      this._theme = pluginTheme;
-    }
-    this._config = this._resolveFunction(this._config);
-    this._theme = this._config.theme;
-    this._variants = this.resolveVariants();
-    handler(this.pluginUtils);
-  }
-
-  loadPluginWithOptions(optionsFunction, userOptions) {
-    const plugin = optionsFunction(_nullishCoalesce(userOptions, () => ( {})));
-    this.loadPlugin(plugin);
-  }
-
-  loadShortcuts(shortcuts) {
-    for (const [key, value] of Object.entries(shortcuts)) {
-      const prefix = this.config('prefix', '');
-      if (typeof value === 'string') {
-        this._plugin.shortcuts[key] = this.compile(value, undefined, undefined, false, undefined, _cssEscape2.default.call(void 0, prefix + key)).styleSheet.children.map(i => i.updateMeta('components', 'shortcuts', _order.layerOrder['shortcuts']));
-      } else {
-        let styles = [];
-        _style.Style.generate('.' + _cssEscape2.default.call(void 0, key), value).forEach(style => {
-          for (const prop of style.property) {
-            if (!prop.value) continue;
-            if (prop.name === '@apply') {
-              styles = styles.concat(this.compile(Array.isArray(prop.value)? prop.value.join(' ') : prop.value).styleSheet.children.map(i => {
-                const newStyle = _tools.deepCopy.call(void 0, style);
-                newStyle.property = [];
-                return newStyle.extend(i);
-              }));
-            } else {
-              const newStyle = _tools.deepCopy.call(void 0, style);
-              newStyle.property = [ prop ];
-              styles.push(newStyle);
+            const themeValue = theme[key];
+            switch (typeof themeValue) {
+                case 'function':
+                    theme[key] = (theme, { negative, breakpoints }) => combineConfig(themeValue(theme, { negative, breakpoints }), (typeof value === 'function' ? value(theme, { negative, breakpoints }) : value ?? {}));
+                    break;
+                case 'object':
+                    theme[key] = (theme, { negative, breakpoints }) => combineConfig(themeValue, (typeof value === 'function' ? value(theme, { negative, breakpoints }) : value ?? {}));
+                    break;
+                default:
+                    theme[key] = value;
             }
-          }
-        });
-        this._plugin.shortcuts[key] = styles.map(i => i.updateMeta('components', 'shortcuts', _order.layerOrder['shortcuts']));
-      }
-    }
-  }
-
-  loadAlias(alias) {
-    for (const [key, value] of Object.entries(alias)) {
-      this._plugin.alias[key] = new (0, _class2.default)(value, undefined, this._cache.variants).parse();
-    }
-  }
-
-  config(path, defaultValue) {
-    if (path === 'corePlugins') return this._plugin.core ? Object.keys(this._plugin.core).filter(i => _optionalChain([this, 'access', _20 => _20._plugin, 'access', _21 => _21.core, 'optionalAccess', _22 => _22[i]])) : Object.keys(_order.pluginOrder).slice(Object.keys(_order.pluginOrder).length/2);
-    return _nullishCoalesce(_tools.getNestedValue.call(void 0, this._config, path), () => ( defaultValue));
-  }
-
-  theme(path, defaultValue) {
-    return this._theme ? _nullishCoalesce(_tools.getNestedValue.call(void 0, this._theme, path), () => ( defaultValue)) : undefined;
-  }
-
-  corePlugins(path) {
-    if (Array.isArray(this._config.corePlugins)) {
-      return (this._config.corePlugins ).includes(path);
-    }
-    return _nullishCoalesce((this.config(`corePlugins.${path}`, true) ), () => ( false));
-  }
-
-  variants(path, defaultValue = []) {
-    if (Array.isArray(this._config.variants)) {
-      return this._config.variants;
-    }
-    return this.config(`variants.${path}`, defaultValue) ;
-  }
-
-  e(selector) {
-    return _cssEscape2.default.call(void 0, selector);
-  }
-
-  prefix(selector) {
-    return selector.replace(/(?=[\w])/, _nullishCoalesce(this._config.prefix, () => ( '')));
-  }
-
-  addUtilities(
-    utilities,
-    options = {
-      layer: 'utilities',
-      variants: [],
-      respectPrefix: true,
-      respectImportant: true,
-    }
-  ) {
-    if (Array.isArray(options)) options = { variants: options };
-    if (Array.isArray(utilities)) utilities = utilities.reduce((previous, current) => _combineConfig2.default.call(void 0, previous, current), {}) ;
-    let output = [];
-    const layer = _nullishCoalesce(options.layer, () => ( 'utilities'));
-    const order = _order.layerOrder[layer] + 1;
-    for (const [key, value] of Object.entries(utilities)) {
-      const styles = _style.Style.generate(key.startsWith('.') && options.respectPrefix ? this.prefix(key) : key, value);
-      if (options.layer) styles.forEach(style => style.updateMeta(layer, 'plugin', order));
-      if (options.respectImportant && this._config.important) styles.forEach(style => style.important = true);
-      let className = _tools.guessClassName.call(void 0, key);
-      if (key.charAt(0) === '@') {
-        styles.forEach(style => {
-          if (style.selector) className = _tools.guessClassName.call(void 0, style.selector);
-          if (Array.isArray(className)) {
-            className.filter(i => i.isClass).forEach(({ selector, pseudo }) => this._addPluginProcessorCache('utilities', selector, pseudo? style.clone('.' + _cssEscape2.default.call(void 0, selector)).wrapSelector(selector => selector + pseudo) : style.clone()));
-            const base = className.filter(i => !i.isClass).map(i => i.selector).join(', ');
-            if (base) this._addPluginProcessorCache('static', base, style.clone(base));
-          } else {
-            this._addPluginProcessorCache(className.isClass? 'utilities' : 'static', className.selector, className.pseudo? style.clone('.' + _cssEscape2.default.call(void 0, className.selector)).wrapSelector(selector => selector + (className ).pseudo) : style.clone());
-          }
-        });
-      } else if (Array.isArray(className)) {
-        className.filter(i => i.isClass).forEach(({ selector, pseudo }) => this._addPluginProcessorCache('utilities', selector, pseudo ? styles.map(i => i.clone('.' + _cssEscape2.default.call(void 0, selector)).wrapSelector(selector => selector + pseudo)): _tools.deepCopy.call(void 0, styles)));
-        const base = className.filter(i => !i.isClass).map(i => i.selector).join(', ');
-        if (base) this._addPluginProcessorCache('static', base, styles.map(i => i.clone(base)));
-      } else {
-        this._addPluginProcessorCache(className.isClass? 'utilities': 'static', className.selector, className.pseudo ? styles.map(style => style.clone('.' + _cssEscape2.default.call(void 0, (className ).selector)).wrapSelector(selector => selector + (className ).pseudo)) : styles);
-      }
-      output = [...output, ...styles];
-    }
-    return output;
-  }
-
-  addDynamic(
-    key,
-    generator,
-    options = {
-      layer: 'utilities',
-      group: 'plugin',
-      variants: [],
-      completions: [],
-      respectPrefix: true,
-      respectImportant: true,
-      respectSelector: false,
-    }
-  ) {
-    const uOptions = Array.isArray(options)? { variants:options } : options;
-    const layer = uOptions.layer || 'utilities';
-    const group = uOptions.group || 'plugin';
-    const order = uOptions.order || _order.layerOrder[layer] + 1;
-    if (uOptions.completions) this._plugin.completions[group] = group in this._plugin.completions ? [...this._plugin.completions[group], ...uOptions.completions] : uOptions.completions;
-    const style = (selector, property, important = uOptions.respectImportant && this._config.important ? true : false) => new (0, _style.Style)(selector, property, important);
-    const prop = (name, value, comment, important = uOptions.respectImportant && this._config.important ? true : false) => new (0, _style.Property)(name, value, comment, important);
-    const keyframes = (selector, property, important = uOptions.respectImportant && this._config.important ? true : false) => new (0, _style.Keyframes)(selector, property, important);
-    keyframes.generate = _style.Keyframes.generate;
-    style.generate = _style.Style.generate;
-    prop.parse = _style.Property.parse;
-    this._plugin.dynamic[key] = (key in this._plugin.dynamic)
-      ? (Utility) => _tools.deepCopy.call(void 0, this._plugin.dynamic[key])(Utility) || generator({ Utility, Style: style, Property: prop, Keyframes: keyframes })
-      : (Utility) => {
-        const output = generator({ Utility, Style: style, Property: prop, Keyframes: keyframes });
-        if (!output) return;
-        if (Array.isArray(output)) return output.map(i => i.updateMeta(layer, group, order, 0, false, i.meta.respectSelector || uOptions.respectSelector));
-        return output.updateMeta(layer, group, order, 0, false, output.meta.respectSelector || uOptions.respectSelector);
-      };
-    return generator;
-  }
-
-  addComponents(
-    components,
-    options = { layer: 'components', variants: [], respectPrefix: false }
-  ) {
-    if (Array.isArray(options)) options = { variants: options };
-    if (Array.isArray(components)) components = components.reduce((previous, current) => _combineConfig2.default.call(void 0, previous, current), {}) ;
-    let output = [];
-    const layer = _nullishCoalesce(options.layer, () => ( 'components'));
-    const order = _order.layerOrder[layer] + 1;
-    for (const [key, value] of Object.entries(components)) {
-      const styles = _style.Style.generate(key.startsWith('.') && options.respectPrefix ? this.prefix(key): key, value);
-      styles.forEach(style => style.updateMeta(layer, 'plugin', order));
-      if (options.respectImportant && this._config.important) styles.forEach(style => style.important = true);
-      let className = _tools.guessClassName.call(void 0, key);
-      if (key.charAt(0) === '@') {
-        styles.forEach(style => {
-          if (style.selector) className = _tools.guessClassName.call(void 0, style.selector);
-          if (Array.isArray(className)) {
-            className.filter(i => i.isClass).forEach(({ selector, pseudo }) => this._addPluginProcessorCache('components', selector, pseudo? style.clone('.' + _cssEscape2.default.call(void 0, selector)).wrapSelector(selector => selector + pseudo) : style.clone()));
-            const base = className.filter(i => !i.isClass).map(i => i.selector).join(', ');
-            if (base) this._addPluginProcessorCache('static', base, style.clone(base));
-          } else {
-            this._addPluginProcessorCache(className.isClass? 'components' : 'static', className.selector, className.pseudo? style.clone('.' + _cssEscape2.default.call(void 0, className.selector)).wrapSelector(selector => selector + (className ).pseudo) : style.clone());
-          }
-        });
-      } else if (Array.isArray(className)) {
-        // one of the selector are not class, treat the entire as static to avoid duplication
-        if (className.some(i => !i.isClass)) {
-          const base = className.map(i => i.selector).join(', ');
-          if (base) this._addPluginProcessorCache('static', base, styles.map(i => i.clone(base)));
         }
-        // class
+    }
+    _resolvePresets(presets) {
+        let config = {};
+        const extend = {};
+        presets.forEach(p => {
+            if (p.theme && 'extend' in p.theme && p.theme.extend) {
+                this._reduceFunction(extend, p.theme.extend);
+                delete p.theme.extend;
+            }
+            config = this._resolveConfig(p, config);
+        });
+        if (config.theme) {
+            config.theme.extend = extend;
+        }
         else {
-          className.forEach(({ selector, pseudo }) => this._addPluginProcessorCache('components', selector, pseudo ? styles.map(i => i.clone('.' + _cssEscape2.default.call(void 0, selector)).wrapSelector(selector => selector + pseudo)): _tools.deepCopy.call(void 0, styles)));
+            config.theme = { extend };
         }
-      } else {
-        this._addPluginProcessorCache(className.isClass? 'components': 'static', className.selector, className.pseudo ? styles.map(style => style.clone('.' + _cssEscape2.default.call(void 0, (className ).selector)).wrapSelector(selector => selector + (className ).pseudo)) : styles);
-      }
-      output = [...output, ...styles];
+        return config;
     }
-    return output;
-  }
-
-  addBase(baseStyles) {
-    let output = [];
-    for (const [key, value] of Object.entries(baseStyles)) {
-      const styles = _style.Style.generate(key, value).map(i => i.updateMeta('base', 'plugin', 10));
-      this._replaceStyleVariants(styles);
-      this._addPluginProcessorCache('preflights', key, styles);
-      output = [...output, ...styles];
-    }
-    return output;
-  }
-
-  addVariant(
-    name,
-    generator,
-  ) {
-    // name && generator && options;
-    const style = generator({
-      ...this.variantUtils,
-      separator: this.config('separator', ':') ,
-      style: new (0, _style.Style)(),
-    });
-    this._variants[name] = () => style;
-    this._cache.variants.push(name);
-    return style;
-  }
-
-  dumpConfig() {
-    const processor = new Processor();
-    const diff = _diffConfig2.default.call(void 0, processor._config, this._config) ;
-    let output = { theme: { extend: {} }, plugins: [] } ;
-    if (diff.theme) {
-      for (const [key, value] of Object.entries(diff.theme)) {
-        if (key !== 'extend') {
-          (output.theme.extend )[key] = value;
+    _resolveFunction(config) {
+        if (!config.theme)
+            return config;
+        const theme = (path, defaultValue) => this.theme(path, defaultValue);
+        for (const dict of [config.theme, 'extend' in config.theme ? config.theme.extend ?? {} : {}]) {
+            for (const [key, value] of Object.entries(dict)) {
+                if (typeof value === 'function') {
+                    dict[key] = value(theme, {
+                        negative,
+                        breakpoints,
+                    });
+                }
+            }
         }
-      }
-      delete diff.theme;
+        return config;
     }
-    if (diff.plugins) {
-      for (const plugin of diff.plugins) {
-        if ('config' in plugin) {
-          delete plugin.config;
+    _replaceStyleVariants(styles) {
+        // @screen sm -> @screen (min-width: 640px)
+        styles.forEach(style => {
+            style.atRules = style.atRules?.map(i => {
+                if (i.match(/@screen/)) {
+                    const variant = i.replace(/\s*@screen\s*/, '');
+                    const atRule = this._variants[variant]().atRules?.[0];
+                    return atRule ?? i;
+                }
+                return i;
+            });
+        });
+    }
+    _addPluginProcessorCache(type, key, styles) {
+        styles = toArray(styles);
+        this._plugin[type][key] = key in this._plugin[type]
+            ? [...this._plugin[type][key], ...styles]
+            : styles;
+    }
+    _loadVariables() {
+        const config = this.theme('vars');
+        if (!config)
+            return;
+        this.addBase({ ':root': Object.assign({}, ...Object.keys(config).map(i => ({ [`--${i}`]: config[i] }))) });
+    }
+    loadConfig(config) {
+        this._config = this.resolveConfig(config, baseConfig);
+        this._theme = this._config.theme;
+        this._handler = createHandler(this._config.handlers);
+        this._config.shortcuts && this.loadShortcuts(this._config.shortcuts);
+        this._config.alias && this.loadAlias(this._config.alias);
+        return this._config;
+    }
+    resolveConfig(config, presets) {
+        this._config = this._resolveConfig({ ...deepCopy(config ? config : {}), exclude: config?.exclude }, deepCopy(presets)); // deep copy
+        this._theme = this._config.theme; // update theme to make sure theme() function works.
+        this._config.plugins?.map(i => typeof i === 'function' ? ('__isOptionsFunction' in i ? this.loadPluginWithOptions(i) : this.loadPlugin(plugin(i))) : this.loadPlugin(i));
+        this._config = this._resolveFunction(this._config);
+        this._variants = { ...this._variants, ...this.resolveVariants() };
+        this._cache.variants = Object.keys(this._variants);
+        this._loadVariables();
+        if (this._config.corePlugins)
+            this._plugin.core = Array.isArray(this._config.corePlugins) ? Object.assign({}, ...this._config.corePlugins.map(i => ({ [i]: true }))) : { ...Object.assign({}, ...Object.keys(pluginOrder).slice(Object.keys(pluginOrder).length / 2).map(i => ({ [i]: true }))), ...this._config.corePlugins };
+        return this._config;
+    }
+    resolveVariants(type) {
+        const variants = resolveVariants(this._config);
+        if (type) {
+            return variants[type];
         }
-        output.plugins.push(plugin);
-      }
-      delete diff.plugins;
+        return { ...variants.screen, ...variants.theme, ...variants.state };
     }
-    output = { ...diff, ...output };
-
-    return `module.exports = ${_tosource2.default.call(void 0, output)}`;
-  }
-} exports.Processor = Processor;
+    resolveStaticUtilities(includePlugins = false) {
+        const staticStyles = {};
+        for (const key in staticUtilities) {
+            const style = generateStaticStyle(this, key, true);
+            if (style)
+                staticStyles[key] = [style];
+        }
+        if (!includePlugins)
+            return staticStyles;
+        return { ...staticStyles, ...this._plugin.utilities, ...this._plugin.components };
+    }
+    resolveDynamicUtilities(includePlugins = false) {
+        if (!includePlugins)
+            return dynamicUtilities;
+        return { ...dynamicUtilities, ...this._plugin.dynamic };
+    }
+    get allConfig() {
+        return this._config;
+    }
+    get allTheme() {
+        return (this._theme ?? {});
+    }
+    get allVariant() {
+        return this._cache.variants;
+    }
+    wrapWithVariants(variants, styles) {
+        // apply variant to style
+        if (!Array.isArray(styles))
+            styles = [styles];
+        if (variants.length === 0)
+            return styles;
+        return styles.map(style => {
+            if (style instanceof Keyframes)
+                return style;
+            const atrules = [];
+            let wrapped = variants
+                .map(i => this._variants[i]())
+                .reduce((previousValue, currentValue) => {
+                const output = previousValue.extend(currentValue);
+                if (previousValue.isAtrule)
+                    atrules.push(previousValue.atRules[0]);
+                return output;
+            }, new Style())
+                .extend(style);
+            if (style instanceof Container)
+                wrapped = new Container().extend(wrapped);
+            if (atrules.length > 0)
+                wrapped.meta.variants = atrules;
+            return wrapped;
+        });
+    }
+    removePrefix(className) {
+        const prefix = this.config('prefix');
+        return prefix ? className.replace(new RegExp(`^${prefix}`), '') : className;
+    }
+    markAsImportant(style, force = false) {
+        const _important = force ? force : this.config('important', false);
+        const important = typeof _important === 'string' ? _important : _important;
+        if (important) {
+            if (typeof important === 'string') {
+                style.parent(important);
+            }
+            else {
+                style.important = true;
+                style.property.forEach(i => i.important = true);
+            }
+        }
+        return style;
+    }
+    extract(className, addComment = false, prefix) {
+        return extract(this, className, addComment, prefix);
+    }
+    test(className, prefix) {
+        return test(this, className, prefix);
+    }
+    preflight(html, includeBase = true, includeGlobal = true, includePlugins = true, ignoreProcessed = false) {
+        let id;
+        if (html) {
+            id = hash(html);
+            if (ignoreProcessed && this._cache.html.includes(id))
+                return new StyleSheet();
+        }
+        id && ignoreProcessed && this._cache.html.push(id);
+        return preflight(this, html, includeBase, includeGlobal, includePlugins);
+    }
+    interpret(classNames, ignoreProcessed = false, handleIgnored) {
+        const ast = new ClassParser(classNames, this.config('separator', ':'), this._cache.variants).parse();
+        const success = [];
+        const ignored = [];
+        const styleSheet = new StyleSheet();
+        const _hIgnored = (className) => {
+            if (handleIgnored) {
+                const style = handleIgnored(className);
+                if (style) {
+                    styleSheet.add(style);
+                    success.push(className);
+                }
+                else {
+                    ignored.push(className);
+                }
+            }
+            ignored.push(className);
+        };
+        const _gStyle = (baseClass, variants, selector, important = false, prefix) => {
+            if (this._config.exclude && testRegexr(selector, this._config.exclude)) {
+                // filter exclude className
+                ignored.push(selector);
+                return;
+            }
+            if (variants[0] && selector in { ...this._plugin.utilities, ...this._plugin.components }) {
+                // handle special selector that conflict with class parser, such as 'hover:abc'
+                success.push(selector);
+                styleSheet.add(deepCopy(this._plugin.utilities[selector]));
+                return;
+            }
+            let result = this.extract(baseClass, false, prefix);
+            if (result) {
+                const escapedSelector = '.' + cssEscape(selector);
+                if (result instanceof Style) {
+                    if (!result.meta.respectSelector)
+                        result.selector = escapedSelector;
+                    this.markAsImportant(result, important);
+                }
+                else if (Array.isArray(result)) {
+                    result = result.map(i => {
+                        if (i instanceof Keyframes)
+                            return i;
+                        if (!i.meta.respectSelector)
+                            i.selector = escapedSelector;
+                        this.markAsImportant(i, important);
+                        return i;
+                    });
+                }
+                const wrapped = this.wrapWithVariants(variants, result);
+                if (wrapped) {
+                    success.push(selector);
+                    styleSheet.add(wrapped);
+                }
+                else {
+                    _hIgnored(selector);
+                }
+            }
+            else {
+                _hIgnored(selector);
+            }
+        };
+        const _hGroup = (obj, parentVariants = []) => {
+            const _eval = (u) => {
+                if (u.type === 'group') {
+                    _hGroup(u, obj.variants);
+                }
+                else if (u.type === 'alias' && u.content in this._plugin.alias) {
+                    this._plugin.alias[u.content].forEach(i => _eval(i));
+                }
+                else {
+                    // utility
+                    const variants = [
+                        ...parentVariants,
+                        ...obj.variants,
+                        ...u.variants,
+                    ];
+                    const important = obj.important || u.important;
+                    const selector = (important ? '!' : '') + [...variants, u.content].join(':');
+                    typeof u.content === 'string' &&
+                        _gStyle(u.content, variants, selector, important, this.config('prefix'));
+                }
+            };
+            Array.isArray(obj.content) && obj.content.forEach(u => _eval(u));
+        };
+        const _gAst = (ast) => {
+            ast.forEach(obj => {
+                if (!(ignoreProcessed && this._cache.utilities.includes(obj.raw))) {
+                    if (ignoreProcessed)
+                        this._cache.utilities.push(obj.raw);
+                    if (obj.type === 'utility') {
+                        if (Array.isArray(obj.content)) {
+                            // #functions stuff
+                        }
+                        else if (obj.content) {
+                            _gStyle(obj.content, obj.variants, obj.raw, obj.important, this.config('prefix'));
+                        }
+                    }
+                    else if (obj.type === 'group') {
+                        _hGroup(obj);
+                    }
+                    else if (obj.type === 'alias' && obj.content in this._plugin.alias) {
+                        _gAst(this._plugin.alias[obj.content]);
+                    }
+                    else {
+                        _hIgnored(obj.raw);
+                    }
+                }
+            });
+        };
+        _gAst(ast);
+        if (!this.config('prefixer'))
+            styleSheet.prefixer = false;
+        return {
+            success,
+            ignored,
+            styleSheet: styleSheet.sort(),
+        };
+    }
+    validate(classNames) {
+        const ast = new ClassParser(classNames, this.config('separator', ':'), this._cache.variants).parse();
+        const success = [];
+        const ignored = [];
+        const _hSuccess = (className, self, parent) => {
+            success.push({
+                className,
+                ...self,
+                parent,
+            });
+        };
+        const _hIgnored = (className, self, parent) => {
+            ignored.push({
+                className,
+                ...self,
+                parent,
+            });
+        };
+        const _gStyle = (baseClass, variants, selector, self, parent, prefix) => {
+            if (this._config.exclude && testRegexr(selector, this._config.exclude)) {
+                // filter exclude className
+                _hIgnored(selector, self, parent);
+                return;
+            }
+            if (variants[0] && selector in { ...this._plugin.utilities, ...this._plugin.components }) {
+                // handle special selector that conflict with class parser, such as 'hover:abc'
+                _hSuccess(selector, self, parent);
+                return;
+            }
+            if (this.test(baseClass, prefix) && variants.filter(i => !(i in this._variants)).length === 0) {
+                _hSuccess(selector, self, parent);
+            }
+            else {
+                _hIgnored(selector, self, parent);
+            }
+        };
+        const _hGroup = (obj, parentVariants = []) => {
+            const _eval = (u, parent) => {
+                if (u.type === 'group') {
+                    _hGroup(u, obj.variants);
+                }
+                else if (u.type === 'alias' && u.content in this._plugin.alias) {
+                    this._plugin.alias[u.content].forEach(i => _eval(i, u));
+                }
+                else {
+                    // utility
+                    const variants = [
+                        ...parentVariants,
+                        ...obj.variants,
+                        ...u.variants,
+                    ];
+                    const important = obj.important || u.important;
+                    const selector = (important ? '!' : '') + [...variants, u.content].join(':');
+                    typeof u.content === 'string' &&
+                        _gStyle(u.content, variants, selector, u, parent, this.config('prefix'));
+                }
+            };
+            Array.isArray(obj.content) && obj.content.forEach(u => _eval(u, obj));
+        };
+        const _gAst = (ast) => {
+            ast.forEach(obj => {
+                if (obj.type === 'utility') {
+                    if (Array.isArray(obj.content)) {
+                        // #functions stuff
+                    }
+                    else if (obj.content) {
+                        _gStyle(obj.content, obj.variants, obj.raw, obj, undefined, this.config('prefix'));
+                    }
+                }
+                else if (obj.type === 'group') {
+                    _hGroup(obj);
+                }
+                else if (obj.type === 'alias' && obj.content in this._plugin.alias) {
+                    _gAst(this._plugin.alias[obj.content]);
+                }
+                else {
+                    _hIgnored(obj.raw, obj);
+                }
+            });
+        };
+        _gAst(ast);
+        return {
+            success,
+            ignored,
+        };
+    }
+    compile(classNames, prefix = 'windi-', showComment = false, ignoreGenerated = false, handleIgnored, outputClassName) {
+        const ast = new ClassParser(classNames, this.config('separator', ':'), this._cache.variants).parse();
+        const success = [];
+        const ignored = [];
+        const styleSheet = new StyleSheet();
+        let className = outputClassName ?? prefix + hash(classNames.trim().split(/\s+/g).join(' '));
+        if (ignoreGenerated && this._cache.classes.includes(className))
+            return { success, ignored, styleSheet, className };
+        const buildSelector = '.' + className;
+        const _hIgnored = (className) => {
+            if (handleIgnored) {
+                const style = handleIgnored(className);
+                if (style) {
+                    styleSheet.add(style);
+                    success.push(className);
+                }
+                else {
+                    ignored.push(className);
+                }
+            }
+            ignored.push(className);
+        };
+        const _gStyle = (baseClass, variants, selector, important = false) => {
+            if (this._config.exclude && testRegexr(selector, this._config.exclude)) {
+                // filter exclude className
+                ignored.push(selector);
+                return;
+            }
+            if (variants[0] && selector in { ...this._plugin.utilities, ...this._plugin.components }) {
+                // handle special selector that conflict with class parser, such as 'hover:abc'
+                success.push(selector);
+                styleSheet.add(deepCopy(this._plugin.utilities[selector]));
+                return;
+            }
+            const result = this.extract(baseClass, showComment);
+            if (result) {
+                if (Array.isArray(result)) {
+                    result.forEach(i => {
+                        if (i instanceof Keyframes) {
+                            i.meta.order = 20;
+                            return i;
+                        }
+                        i.selector = buildSelector;
+                        this.markAsImportant(i, important);
+                    });
+                }
+                else {
+                    result.selector = buildSelector;
+                    this.markAsImportant(result, important);
+                }
+                const wrapped = this.wrapWithVariants(variants, result);
+                if (wrapped) {
+                    success.push(selector);
+                    styleSheet.add(wrapped);
+                }
+                else {
+                    _hIgnored(selector);
+                }
+            }
+            else {
+                _hIgnored(selector);
+            }
+        };
+        const _hGroup = (obj, parentVariants = []) => {
+            Array.isArray(obj.content) &&
+                obj.content.forEach((u) => {
+                    if (u.type === 'group') {
+                        _hGroup(u, obj.variants);
+                    }
+                    else {
+                        // utility
+                        const variants = [
+                            ...parentVariants,
+                            ...obj.variants,
+                            ...u.variants,
+                        ];
+                        const selector = [...variants, u.content].join(':');
+                        typeof u.content === 'string' &&
+                            _gStyle(this.removePrefix(u.content), variants, selector, obj.important || u.important);
+                    }
+                });
+        };
+        ast.forEach((obj) => {
+            if (obj.type === 'utility') {
+                if (Array.isArray(obj.content)) {
+                    // #functions stuff
+                }
+                else if (obj.content) {
+                    _gStyle(this.removePrefix(obj.content), obj.variants, obj.raw, obj.important);
+                }
+            }
+            else if (obj.type === 'group') {
+                _hGroup(obj);
+            }
+            else {
+                _hIgnored(obj.raw);
+            }
+        });
+        className = success.length > 0 ? className : undefined;
+        if (ignoreGenerated && className)
+            this._cache.classes.push(className);
+        if (!this.config('prefixer'))
+            styleSheet.prefixer = false;
+        return {
+            success,
+            ignored,
+            className,
+            styleSheet: styleSheet.sortby(sortGroup).combine(),
+        };
+    }
+    attributify(attrs, ignoreProcessed = false) {
+        const success = [];
+        const ignored = [];
+        const styleSheet = new StyleSheet();
+        const { prefix, separator, disable } = (this._config.attributify && typeof this._config.attributify === 'boolean') ? {} : this._config.attributify || {};
+        const _gStyle = (key, value, equal = false, notAllow = false, ignoreProcessed = false) => {
+            const buildSelector = `[${this.e((prefix || '') + key)}${equal ? '=' : '~='}"${value}"]`;
+            if (notAllow || (ignoreProcessed && this._cache.attrs.includes(buildSelector))) {
+                ignored.push(buildSelector);
+                return;
+            }
+            const importantValue = value.startsWith('!');
+            if (importantValue)
+                value = value.slice(1);
+            const importantKey = key.startsWith('!');
+            if (importantKey)
+                key = key.slice(1);
+            const id = key.match(/\w+$/)?.[0] ?? '';
+            const splits = value.split(separator || ':');
+            let variants = splits.slice(0, -1);
+            let utility = splits.slice(-1)[0];
+            let keys = key.split(separator || ':');
+            const lastKey = keys.slice(-1)[0];
+            if (lastKey in this._variants && lastKey !== 'svg') {
+                variants = [...keys, ...variants];
+            }
+            else if (id in this._variants && id !== 'svg') {
+                // sm = ... || sm:hover = ... || sm-hover = ...
+                const matches = key.match(/[@<\w]+/g);
+                if (!matches) {
+                    ignored.push(buildSelector);
+                    return;
+                }
+                variants = [...matches, ...variants];
+            }
+            else {
+                // text = ... || sm:text = ... || sm-text = ... || sm-hover-text = ...
+                if (!keys) {
+                    ignored.push(buildSelector);
+                    return;
+                }
+                if (keys.length === 1)
+                    keys = key.split('-');
+                let last;
+                // handle min-h || max-w ...
+                if (['min', 'max'].includes(keys.slice(-2, -1)[0])) {
+                    variants = [...keys.slice(0, -2), ...variants];
+                    last = keys.slice(-2).join('-');
+                }
+                else {
+                    variants = [...keys.slice(0, -1), ...variants];
+                    last = keys[keys.length - 1];
+                }
+                // handle negative, such as m = -x-2
+                const negative = utility.charAt(0) === '-';
+                if (negative)
+                    utility = utility.slice(1);
+                utility = ['m', 'p'].includes(last) && ['t', 'l', 'b', 'r', 'x', 'y'].includes(utility.charAt(0)) ? last + utility : last + '-' + utility;
+                if (negative)
+                    utility = '-' + utility;
+                utility !== 'cursor-default' && (utility = utility.replace(/-(~|default)$/, ''));
+                // handle special cases
+                switch (last) {
+                    case 'w':
+                        if (['w-min', 'w-max', 'w-min-content', 'w-max-content'].includes(utility)) {
+                            utility = utility.slice(0, 5);
+                        }
+                        else if (utility.startsWith('w-min')) {
+                            utility = 'min-w' + utility.slice(5);
+                        }
+                        else if (utility.startsWith('w-max')) {
+                            utility = 'max-w' + utility.slice(5);
+                        }
+                        break;
+                    case 'h':
+                        if (['h-min', 'h-max', 'h-min-content', 'h-max-content'].includes(utility)) {
+                            utility = utility.slice(0, 5);
+                        }
+                        else if (utility.startsWith('h-min')) {
+                            utility = 'min-h' + utility.slice(5);
+                        }
+                        else if (utility.startsWith('h-max')) {
+                            utility = 'max-h' + utility.slice(5);
+                        }
+                        break;
+                    case 'flex':
+                        switch (utility) {
+                            case 'flex-default':
+                                utility = 'flex';
+                                break;
+                            case 'flex-inline':
+                                utility = 'inline-flex';
+                                break;
+                        }
+                        break;
+                    case 'grid':
+                        switch (utility) {
+                            case 'grid-default':
+                                utility = 'grid';
+                                break;
+                            case 'grid-inline':
+                                utility = 'inline-grid';
+                                break;
+                            default:
+                                if (/^grid-(auto|gap|col|row)-/.test(utility))
+                                    utility = utility.slice(5);
+                        }
+                        break;
+                    case 'justify':
+                        if (utility.startsWith('justify-content-')) {
+                            utility = 'justify-' + utility.slice(16);
+                        }
+                        break;
+                    case 'align':
+                        if (/^align-(items|self|content)-/.test(utility)) {
+                            utility = utility.slice(6);
+                        }
+                        else {
+                            utility = 'content-' + utility.slice(6);
+                        }
+                        break;
+                    case 'place':
+                        if (!/^place-(items|self|content)-/.test(utility)) {
+                            utility = 'place-content-' + utility.slice(6);
+                        }
+                        break;
+                    case 'font':
+                        if (/^font-(tracking|leading)-/.test(utility) || ['font-italic', 'font-not-italic', 'font-antialiased', 'font-subpixel-antialiased', 'font-normal-nums', 'font-ordinal', 'font-slashed-zero', 'font-lining-nums', 'font-oldstyle-nums', 'font-proportional-nums', 'font-tabular-nums', 'font-diagonal-fractions', 'font-stacked-fractions'].includes(utility))
+                            utility = utility.slice(5);
+                        break;
+                    case 'text':
+                        if (['text-baseline', 'text-top', 'text-middle', 'text-bottom', 'text-text-top', 'text-text-bottom'].includes(utility)) {
+                            utility = 'align-' + utility.slice(5);
+                        }
+                        else if (utility.startsWith('text-placeholder') || utility.startsWith('text-underline') || utility.startsWith('text-tab') || utility.startsWith('text-indent') || utility.startsWith('text-hyphens') || utility.startsWith('text-write')) {
+                            utility = utility.slice(5);
+                        }
+                        else if (['text-underline', 'text-line-through', 'text-no-underline', 'text-uppercase', 'text-lowercase', 'text-capitalize', 'text-normal-case', 'text-truncate', 'text-overflow-ellipsis', 'text-overflow-clip', 'text-break-normal', 'text-break-words', 'text-break-all'].includes(utility)) {
+                            utility = utility.slice(5);
+                        }
+                        else if (utility.startsWith('text-space')) {
+                            utility = 'white' + utility.slice(5);
+                        }
+                        break;
+                    case 'underline':
+                        if (utility === 'underline-none') {
+                            utility = 'no-underline';
+                        }
+                        else if (utility === 'underline-line-through') {
+                            utility = 'line-through';
+                        }
+                        break;
+                    case 'svg':
+                        if (utility.startsWith('svg-fill') || utility.startsWith('svg-stroke'))
+                            utility = utility.slice(4);
+                        break;
+                    case 'border':
+                        if (utility.startsWith('border-rounded')) {
+                            utility = utility.slice(7);
+                        }
+                        break;
+                    case 'gradient':
+                        if (utility === 'gradient-none') {
+                            utility = 'bg-none';
+                        }
+                        else if (/^gradient-to-[trbl]{1,2}$/.test(utility)) {
+                            utility = 'bg-' + utility;
+                        }
+                        else if (/^gradient-(from|via|to)-/.test(utility)) {
+                            utility = utility.slice(9);
+                        }
+                        break;
+                    case 'display':
+                        utility = utility.slice(8);
+                        break;
+                    case 'pos':
+                        utility = utility.slice(4);
+                        break;
+                    case 'position':
+                        utility = utility.slice(9);
+                        break;
+                    case 'box':
+                        if (/^box-(decoration|shadow)/.test(utility)) {
+                            utility = utility.slice(4);
+                        }
+                        break;
+                    case 'filter':
+                        if (utility !== 'filter-none' && utility !== 'filter') {
+                            utility = utility.slice(7);
+                        }
+                        break;
+                    case 'backdrop':
+                        if (utility === 'backdrop') {
+                            utility = 'backdrop-filter';
+                        }
+                        else if (utility === 'backdrop-none') {
+                            utility = 'backdrop-filter-none';
+                        }
+                        break;
+                    case 'transition':
+                        if (/transition-(duration|ease|delay)-/.test(utility)) {
+                            utility = utility.slice(11);
+                        }
+                        break;
+                    case 'transform':
+                        if (!['transform-gpu', 'transform-none', 'transform'].includes(utility)) {
+                            utility = utility.slice(10);
+                        }
+                        break;
+                    case 'isolation':
+                        if (utility === 'isolation-isolate')
+                            utility = 'isolate';
+                        break;
+                    case 'table':
+                        if (utility === 'table-inline') {
+                            utility = 'inline-table';
+                        }
+                        else if (utility.startsWith('table-caption-') || utility.startsWith('table-empty-cells')) {
+                            utility = utility.slice(6);
+                        }
+                        break;
+                    case 'pointer':
+                        utility = 'pointer-events' + utility.slice(7);
+                        break;
+                    case 'resize':
+                        if (utility === 'resize-both')
+                            utility = 'resize';
+                        break;
+                    case 'ring':
+                        break;
+                    case 'blend':
+                        utility = 'mix-' + utility;
+                        break;
+                    case 'sr':
+                        if (utility === 'sr-not-only')
+                            utility = 'not-sr-only';
+                        break;
+                }
+            }
+            const style = this.extract(utility, false);
+            if (style) {
+                const important = importantKey || importantValue;
+                if (Array.isArray(style)) {
+                    style.forEach(i => {
+                        if (i instanceof Keyframes)
+                            return i;
+                        i.selector = buildSelector;
+                        this.markAsImportant(i, important);
+                    });
+                }
+                else {
+                    style.selector = buildSelector;
+                    this.markAsImportant(style, important);
+                }
+                if (variants.find(i => !(i in this._variants))) {
+                    ignored.push(buildSelector);
+                }
+                else {
+                    const wrapped = this.wrapWithVariants(variants, style);
+                    if (wrapped) {
+                        ignoreProcessed && this._cache.attrs.push(buildSelector);
+                        success.push(buildSelector);
+                        styleSheet.add(wrapped);
+                    }
+                    else {
+                        ignored.push(buildSelector);
+                    }
+                }
+            }
+            else {
+                ignored.push(buildSelector);
+            }
+        };
+        // eslint-disable-next-line prefer-const
+        for (let [key, value] of Object.entries(attrs)) {
+            let notAllow = false;
+            if (prefix) {
+                if (key.startsWith(prefix)) {
+                    key = key.slice(prefix.length);
+                }
+                else {
+                    notAllow = true;
+                }
+            }
+            if (disable?.includes(key))
+                notAllow = true;
+            if (Array.isArray(value)) {
+                value.forEach(i => _gStyle(key, i, false, notAllow, ignoreProcessed));
+            }
+            else {
+                _gStyle(key, value, true, notAllow, ignoreProcessed);
+            }
+        }
+        return {
+            success,
+            ignored,
+            styleSheet: styleSheet.sort().combine(),
+        };
+    }
+    loadPlugin({ handler, config, }) {
+        if (config) {
+            config = this._resolveFunction(config);
+            config = combineConfig(config, this._config);
+            const pluginTheme = config.theme;
+            const extendTheme = pluginTheme?.extend;
+            if (pluginTheme && extendTheme && typeof extendTheme === 'object') {
+                for (const [key, value] of Object.entries(extendTheme)) {
+                    const themeValue = pluginTheme[key];
+                    if (themeValue && typeof themeValue === 'object') {
+                        pluginTheme[key] = { ...(themeValue ?? {}), ...value };
+                    }
+                    else if (value && typeof value === 'object') {
+                        pluginTheme[key] = value;
+                    }
+                }
+            }
+            this._config = { ...config, theme: pluginTheme };
+            this._theme = pluginTheme;
+        }
+        this._config = this._resolveFunction(this._config);
+        this._theme = this._config.theme;
+        this._variants = this.resolveVariants();
+        handler(this.pluginUtils);
+    }
+    loadPluginWithOptions(optionsFunction, userOptions) {
+        const plugin = optionsFunction(userOptions ?? {});
+        this.loadPlugin(plugin);
+    }
+    loadShortcuts(shortcuts) {
+        for (const [key, value] of Object.entries(shortcuts)) {
+            const prefix = this.config('prefix', '');
+            if (typeof value === 'string') {
+                this._plugin.shortcuts[key] = this.compile(value, undefined, undefined, false, undefined, cssEscape(prefix + key)).styleSheet.children.map(i => i.updateMeta('components', 'shortcuts', layerOrder['shortcuts']));
+            }
+            else {
+                let styles = [];
+                Style.generate('.' + cssEscape(key), value).forEach(style => {
+                    for (const prop of style.property) {
+                        if (!prop.value)
+                            continue;
+                        if (prop.name === '@apply') {
+                            styles = styles.concat(this.compile(Array.isArray(prop.value) ? prop.value.join(' ') : prop.value).styleSheet.children.map(i => {
+                                const newStyle = deepCopy(style);
+                                newStyle.property = [];
+                                return newStyle.extend(i);
+                            }));
+                        }
+                        else {
+                            const newStyle = deepCopy(style);
+                            newStyle.property = [prop];
+                            styles.push(newStyle);
+                        }
+                    }
+                });
+                this._plugin.shortcuts[key] = styles.map(i => i.updateMeta('components', 'shortcuts', layerOrder['shortcuts']));
+            }
+        }
+    }
+    loadAlias(alias) {
+        for (const [key, value] of Object.entries(alias)) {
+            this._plugin.alias[key] = new ClassParser(value, undefined, this._cache.variants).parse();
+        }
+    }
+    config(path, defaultValue) {
+        if (path === 'corePlugins')
+            return this._plugin.core ? Object.keys(this._plugin.core).filter(i => this._plugin.core?.[i]) : Object.keys(pluginOrder).slice(Object.keys(pluginOrder).length / 2);
+        return getNestedValue(this._config, path) ?? defaultValue;
+    }
+    theme(path, defaultValue) {
+        return this._theme ? getNestedValue(this._theme, path) ?? defaultValue : undefined;
+    }
+    corePlugins(path) {
+        if (Array.isArray(this._config.corePlugins)) {
+            return this._config.corePlugins.includes(path);
+        }
+        return this.config(`corePlugins.${path}`, true) ?? false;
+    }
+    variants(path, defaultValue = []) {
+        if (Array.isArray(this._config.variants)) {
+            return this._config.variants;
+        }
+        return this.config(`variants.${path}`, defaultValue);
+    }
+    e(selector) {
+        return cssEscape(selector);
+    }
+    prefix(selector) {
+        return selector.replace(/(?=[\w])/, this._config.prefix ?? '');
+    }
+    addUtilities(utilities, options = {
+        layer: 'utilities',
+        variants: [],
+        respectPrefix: true,
+        respectImportant: true,
+    }) {
+        if (Array.isArray(options))
+            options = { variants: options };
+        if (Array.isArray(utilities))
+            utilities = utilities.reduce((previous, current) => combineConfig(previous, current), {});
+        let output = [];
+        const layer = options.layer ?? 'utilities';
+        const order = layerOrder[layer] + 1;
+        for (const [key, value] of Object.entries(utilities)) {
+            const styles = Style.generate(key.startsWith('.') && options.respectPrefix ? this.prefix(key) : key, value);
+            if (options.layer)
+                styles.forEach(style => style.updateMeta(layer, 'plugin', order));
+            if (options.respectImportant && this._config.important)
+                styles.forEach(style => style.important = true);
+            let className = guessClassName(key);
+            if (key.charAt(0) === '@') {
+                styles.forEach(style => {
+                    if (style.selector)
+                        className = guessClassName(style.selector);
+                    if (Array.isArray(className)) {
+                        className.filter(i => i.isClass).forEach(({ selector, pseudo }) => this._addPluginProcessorCache('utilities', selector, pseudo ? style.clone('.' + cssEscape(selector)).wrapSelector(selector => selector + pseudo) : style.clone()));
+                        const base = className.filter(i => !i.isClass).map(i => i.selector).join(', ');
+                        if (base)
+                            this._addPluginProcessorCache('static', base, style.clone(base));
+                    }
+                    else {
+                        this._addPluginProcessorCache(className.isClass ? 'utilities' : 'static', className.selector, className.pseudo ? style.clone('.' + cssEscape(className.selector)).wrapSelector(selector => selector + className.pseudo) : style.clone());
+                    }
+                });
+            }
+            else if (Array.isArray(className)) {
+                className.filter(i => i.isClass).forEach(({ selector, pseudo }) => this._addPluginProcessorCache('utilities', selector, pseudo ? styles.map(i => i.clone('.' + cssEscape(selector)).wrapSelector(selector => selector + pseudo)) : deepCopy(styles)));
+                const base = className.filter(i => !i.isClass).map(i => i.selector).join(', ');
+                if (base)
+                    this._addPluginProcessorCache('static', base, styles.map(i => i.clone(base)));
+            }
+            else {
+                this._addPluginProcessorCache(className.isClass ? 'utilities' : 'static', className.selector, className.pseudo ? styles.map(style => style.clone('.' + cssEscape(className.selector)).wrapSelector(selector => selector + className.pseudo)) : styles);
+            }
+            output = [...output, ...styles];
+        }
+        return output;
+    }
+    addDynamic(key, generator, options = {
+        layer: 'utilities',
+        group: 'plugin',
+        variants: [],
+        completions: [],
+        respectPrefix: true,
+        respectImportant: true,
+        respectSelector: false,
+    }) {
+        const uOptions = Array.isArray(options) ? { variants: options } : options;
+        const layer = uOptions.layer || 'utilities';
+        const group = uOptions.group || 'plugin';
+        const order = uOptions.order || layerOrder[layer] + 1;
+        if (uOptions.completions)
+            this._plugin.completions[group] = group in this._plugin.completions ? [...this._plugin.completions[group], ...uOptions.completions] : uOptions.completions;
+        const style = (selector, property, important = uOptions.respectImportant && this._config.important ? true : false) => new Style(selector, property, important);
+        const prop = (name, value, comment, important = uOptions.respectImportant && this._config.important ? true : false) => new Property(name, value, comment, important);
+        const keyframes = (selector, property, important = uOptions.respectImportant && this._config.important ? true : false) => new Keyframes(selector, property, important);
+        keyframes.generate = Keyframes.generate;
+        style.generate = Style.generate;
+        prop.parse = Property.parse;
+        this._plugin.dynamic[key] = (key in this._plugin.dynamic)
+            ? (Utility) => deepCopy(this._plugin.dynamic[key])(Utility) || generator({ Utility, Style: style, Property: prop, Keyframes: keyframes })
+            : (Utility) => {
+                const output = generator({ Utility, Style: style, Property: prop, Keyframes: keyframes });
+                if (!output)
+                    return;
+                if (Array.isArray(output))
+                    return output.map(i => i.updateMeta(layer, group, order, 0, false, i.meta.respectSelector || uOptions.respectSelector));
+                return output.updateMeta(layer, group, order, 0, false, output.meta.respectSelector || uOptions.respectSelector);
+            };
+        return generator;
+    }
+    addComponents(components, options = { layer: 'components', variants: [], respectPrefix: false }) {
+        if (Array.isArray(options))
+            options = { variants: options };
+        if (Array.isArray(components))
+            components = components.reduce((previous, current) => combineConfig(previous, current), {});
+        let output = [];
+        const layer = options.layer ?? 'components';
+        const order = layerOrder[layer] + 1;
+        for (const [key, value] of Object.entries(components)) {
+            const styles = Style.generate(key.startsWith('.') && options.respectPrefix ? this.prefix(key) : key, value);
+            styles.forEach(style => style.updateMeta(layer, 'plugin', order));
+            if (options.respectImportant && this._config.important)
+                styles.forEach(style => style.important = true);
+            let className = guessClassName(key);
+            if (key.charAt(0) === '@') {
+                styles.forEach(style => {
+                    if (style.selector)
+                        className = guessClassName(style.selector);
+                    if (Array.isArray(className)) {
+                        className.filter(i => i.isClass).forEach(({ selector, pseudo }) => this._addPluginProcessorCache('components', selector, pseudo ? style.clone('.' + cssEscape(selector)).wrapSelector(selector => selector + pseudo) : style.clone()));
+                        const base = className.filter(i => !i.isClass).map(i => i.selector).join(', ');
+                        if (base)
+                            this._addPluginProcessorCache('static', base, style.clone(base));
+                    }
+                    else {
+                        this._addPluginProcessorCache(className.isClass ? 'components' : 'static', className.selector, className.pseudo ? style.clone('.' + cssEscape(className.selector)).wrapSelector(selector => selector + className.pseudo) : style.clone());
+                    }
+                });
+            }
+            else if (Array.isArray(className)) {
+                // one of the selector are not class, treat the entire as static to avoid duplication
+                if (className.some(i => !i.isClass)) {
+                    const base = className.map(i => i.selector).join(', ');
+                    if (base)
+                        this._addPluginProcessorCache('static', base, styles.map(i => i.clone(base)));
+                }
+                // class
+                else {
+                    className.forEach(({ selector, pseudo }) => this._addPluginProcessorCache('components', selector, pseudo ? styles.map(i => i.clone('.' + cssEscape(selector)).wrapSelector(selector => selector + pseudo)) : deepCopy(styles)));
+                }
+            }
+            else {
+                this._addPluginProcessorCache(className.isClass ? 'components' : 'static', className.selector, className.pseudo ? styles.map(style => style.clone('.' + cssEscape(className.selector)).wrapSelector(selector => selector + className.pseudo)) : styles);
+            }
+            output = [...output, ...styles];
+        }
+        return output;
+    }
+    addBase(baseStyles) {
+        let output = [];
+        for (const [key, value] of Object.entries(baseStyles)) {
+            const styles = Style.generate(key, value).map(i => i.updateMeta('base', 'plugin', 10));
+            this._replaceStyleVariants(styles);
+            this._addPluginProcessorCache('preflights', key, styles);
+            output = [...output, ...styles];
+        }
+        return output;
+    }
+    addVariant(name, generator) {
+        // name && generator && options;
+        const style = generator({
+            ...this.variantUtils,
+            separator: this.config('separator', ':'),
+            style: new Style(),
+        });
+        this._variants[name] = () => style;
+        this._cache.variants.push(name);
+        return style;
+    }
+    dumpConfig() {
+        const processor = new Processor();
+        const diff = diffConfig(processor._config, this._config);
+        let output = { theme: { extend: {} }, plugins: [] };
+        if (diff.theme) {
+            for (const [key, value] of Object.entries(diff.theme)) {
+                if (key !== 'extend') {
+                    output.theme.extend[key] = value;
+                }
+            }
+            delete diff.theme;
+        }
+        if (diff.plugins) {
+            for (const plugin of diff.plugins) {
+                if ('config' in plugin) {
+                    delete plugin.config;
+                }
+                output.plugins.push(plugin);
+            }
+            delete diff.plugins;
+        }
+        output = { ...diff, ...output };
+        return `module.exports = ${toSource(output)}`;
+    }
+}
