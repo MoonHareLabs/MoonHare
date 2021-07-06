@@ -1,10 +1,10 @@
 import arg from 'arg';
-import { deepCopy } from '../utils/tools';
+import { deepCopy } from 'windicss/utils/tools';
 import { resolve, dirname, join, extname } from 'path';
-import { Processor } from '../lib';
+import { Processor } from 'windicss/lib';
 import { readFileSync, writeFile, watch, unwatchFile, existsSync } from 'fs';
-import { HTMLParser, CSSParser } from '../utils/parser';
-import { StyleSheet } from '../utils/style';
+import { HTMLParser, CSSParser } from 'windicss/utils/parser';
+import { StyleSheet } from 'windicss/utils/style';
 import {
   getVersion,
   globArray,
@@ -14,18 +14,18 @@ import {
 } from './utils';
 import type { Extractor } from '../interfaces';
 
-const doc = `Generate css from text files that containing windi classes.
+const doc = `Generate css from text files that containing moonhare classes.
 By default, it will use interpretation mode to generate a single css file.
 
 Usage:
-  windicss [filenames]
-  windicss [filenames] -c -m -d
-  windicss [filenames] -c -s -m -d
-  windicss [filenames] [-c | -i] [-a] [-b | -s] [-m] [-d] [-p <prefix:string>] [-o <path:string>] [--args arguments]
+  moonhare [filenames]
+  moonhare [filenames] -c -m -d
+  moonhare [filenames] -c -s -m -d
+  moonhare [filenames] [-c | -i] [-a] [-b | -s] [-m] [-d] [-p <prefix:string>] [-o <path:string>] [--args arguments]
 
 Options:
   -h, --help            Print this help message and exit.
-  -v, --version         Print windicss current version and exit.
+  -v, --version         Print moonhare current version and exit.
 
   -i, --interpret       Interpretation mode, generate class selectors. This is the default behavior.
   -c, --compile         Compilation mode, combine the class name in each row into a single class.
@@ -42,7 +42,7 @@ Options:
   -o, --output PATH     Set output css file path.
   -f, --config PATH     Set config file path.
 
-  --style               Parse and transform windi style block.
+  --style               Parse and transform moonhare style block.
   --init PATH           Start a new project on the path.
 `;
 
