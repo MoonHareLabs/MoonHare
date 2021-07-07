@@ -1,10 +1,11 @@
 export default class Processor {
     constructor(config) {
         this.config = config
-        this.utils = new Map()
+        this.utils = {}
     }
 
-    processUtil(className.startsWith('-')) {
+    processUtil() {
+        if (className.startsWith('!')) {
             negative = true
             className = className.slice(1)
         }
@@ -39,8 +40,8 @@ export default class Processor {
                 console.log(`Unsupported variant name "${variantName}" in "${raw}".`)
                 return
             }
-            if (!utils.has(variantName)) utils.set(variantName, new Map())
-            utils = utils.get(variantName)
+            utils = utils[variantName] || {}
+            if (!utils) utils[variantName] = utils
             selector = variant.call(selector)
         }
     }
