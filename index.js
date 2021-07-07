@@ -21,5 +21,8 @@ export default class Processor {
         pluginArgs = variantNames.pop().split(this.config.separator)
         pluginName = pluginArgs.shift()
         plugin = this.config.plugins[pluginName]
+        if(!plugin) {
+            console.log(`Unsupported plugin name "${pluginName}" in "${raw}".`)
+        }
     }
 }
