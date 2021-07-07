@@ -1,12 +1,12 @@
 export default class Processor {
     constructor(config) {
         this.config = config
+        this.utils = new Map()
     }
 
-    processClass(raw) {
-        if (raw.startsWith(this.config.important)) {
-            important = true
-            className = raw.slice(1)
+    processUtil(className.startsWith('-')) {
+            negative = true
+            className = className.slice(1)
         }
         if (className.startsWith('-')) {
             negative = true
@@ -24,7 +24,7 @@ export default class Processor {
         if(!plugin) {
             console.log(`Unsupported plugin name "${pluginName}" in "${raw}".`)
         }
-        classObj = {
+        block = plugin.call({
             raw: raw,
             className: className,
             important: important,
@@ -32,8 +32,7 @@ export default class Processor {
             variants: variantNames,
             args: pluginArgs,
             get rawArgs() { return pluginArgs.join(this.config.separator) },
-        }
-        block = plugin.call(classObj)
+        })
         for (variantName in variantNames) {
             variant = this.variants[variantName]
             if (!variant) {
