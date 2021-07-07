@@ -24,5 +24,19 @@ export default class Processor {
         if(!plugin) {
             console.log(`Unsupported plugin name "${pluginName}" in "${raw}".`)
         }
+        classObj = {
+            raw: raw,
+            className: className,
+            important: important,
+            negative: negative,
+            variants: variantNames,
+            args: pluginArgs,
+            get rawArgs() { return pluginArgs.join(this.config.separator) },
+        }
+        block = plugin.call(classObj)
+        for (variantName in variantNames) {
+            variant = this.variants[variantName]
+            selector = variant.call(selector)
+        }
     }
 }
