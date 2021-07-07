@@ -39,6 +39,8 @@ export default class Processor {
                 console.log(`Unsupported variant name "${variantName}" in "${raw}".`)
                 return
             }
+            if (!utils.has(variantName)) utils.set(variantName, new Map())
+            utils = utils.get(variantName)
             selector = variant.call(selector)
         }
     }
