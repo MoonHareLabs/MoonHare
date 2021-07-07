@@ -36,6 +36,10 @@ export default class Processor {
         block = plugin.call(classObj)
         for (variantName in variantNames) {
             variant = this.variants[variantName]
+            if (!variant) {
+                console.log(`Unsupported variant name "${variantName}" in "${raw}".`)
+                return
+            }
             selector = variant.call(selector)
         }
     }
