@@ -10,9 +10,16 @@ export default class Processor {
         }
         if (className.startsWith('-')) {
             negative = true
-            className = raw.slice(1)
+            className = className.slice(1)
         }
-        variantNames = className.split(this.config.variantSeperator)
-        pluginArgs = variantNames
+        if (this.config.prefix) {
+            if (className.startsWith(this.config.prefix))
+                className = className.slice(this.config.prefix.length)
+            else return
+        }
+        variantNames = className.split(this.config.variantSeparator)
+        pluginArgs = variantNames.pop().split(this.config.separator)
+        pluginName = pluginArgs.shift()
+        plugin = this.config.plugins[pluginName]
     }
 }
