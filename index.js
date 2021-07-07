@@ -3,7 +3,15 @@ export default class Processor {
         this.config = config
     }
 
-    processClass(className) {
+    processClass(raw) {
+        if (raw.startsWith(this.config.important)) {
+            important = true
+            className = raw.slice(1)
+        }
+        if (className.startsWith('-')) {
+            negative = true
+            className = raw.slice(1)
+        }
         variantNames = className.split(this.config.variantSeperator)
         pluginArgs = variantNames
     }
