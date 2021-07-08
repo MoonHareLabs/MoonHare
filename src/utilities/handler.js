@@ -3,6 +3,14 @@ import { Property, Style } from '../../utils/style';
 import { toColor } from '../../utils/color';
 import { cssEscape } from '../../utils/algorithm';
 import { isNumber, isFraction, isSize, roundUp, fracToPercent, hex2RGB, negateValue, flatColors, splitColorGroup, } from '../../utils/tools';
+
+export function handle() {
+    if (body[0] == '[') {
+        if (body.slice[-1] == ']') return props.map(prop => `${prop}:${value};`).join('')
+    }
+    value = this.config[id][
+}
+
 export function createHandler(handlers = { static: true }) {
     return (utility, value, color) => {
         const handler = {
