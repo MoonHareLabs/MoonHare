@@ -6,7 +6,11 @@ import { isNumber, isFraction, isSize, roundUp, fracToPercent, hex2RGB, negateVa
 
 export function handle() {
     if (body[0] == '[') {
-        if (body.slice[-1] == ']') return props.map(prop => `${prop}:${value};`).join('')
+        if (body.slice[-1] == ']')
+            return props.map(prop => `${prop}:${body.slice(1, -1).replace(/_/g, ' ')};`).join('')
+    }
+    else if (body[0] == '$') {
+        return props.map(prop => `${prop}:var(--${body.slice(1)});`).join('')
     }
     value = this.config[id][
 }
