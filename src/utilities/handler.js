@@ -14,13 +14,12 @@ export function createHandler(handlers = { static: true }) {
                 if (handler.value)
                     return handler;
                 if (map && typeof map === 'object') {
-                    const knownMap = map;
-                    if (knownMap.DEFAULT)
-                        knownMap[handler.utility.raw] = knownMap.DEFAULT;
-                    if (handler._amount in knownMap)
+                    if (map.DEFAULT)
+                        map[handler.utility.raw] = map.DEFAULT;
+                    if (handler._amount in map)
                         handler.value = callback
                             ? callback(handler._amount)
-                            : `${knownMap[handler._amount]}`;
+                            : `${map[handler._amount]}`;
                 }
                 return handler;
             } : () => handler,
@@ -28,12 +27,9 @@ export function createHandler(handlers = { static: true }) {
                 if (handler.value)
                     return handler;
                 if (map && typeof map === 'object') {
-                    const knownMap = map;
-                    if (knownMap.DEFAULT)
-                        knownMap[''] = knownMap.DEFAULT;
                     const body = handler.utility.body;
-                    if (body in knownMap)
-                        handler.value = callback ? callback(body) : `${knownMap[body]}`;
+                    if (body in map)
+                        handler.value = callback ? callback(body) : `${map[body]}`;
                 }
                 return handler;
             } : () => handler,
