@@ -5,19 +5,18 @@ export default class Processor {
     }
 
     processUtil() {
-        if (className.startsWith('!')) {
-            negative = true
-            className = className.slice(1)
-        }
-        if (className.startsWith('-')) {
-            negative = true
-            className = className.slice(1)
-        }
+        raw.replace(/^!-|^-!|^!|^-/, (match) => {
+            negative = match != '!'
+            important = match != '-'
+            return ''
+        })
+
         if (this.config.prefix) {
             if (className.startsWith(this.config.prefix))
                 className = className.slice(this.config.prefix.length)
             else return
         }
+
         variantNames = className.split(this.config.variantSeparator)
         pluginArgs = variantNames.pop().split(this.config.separator)
         pluginName = pluginArgs.shift()
