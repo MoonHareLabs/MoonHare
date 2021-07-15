@@ -4,22 +4,30 @@ export default class Processor {
         this.utils = {}
     }
 
-    processUtil() {
-        raw.replace(/^!-|^-!|^!|^-/, (match) => {
+    processUtil(input) {
+        let raw, negative, important, variants, parts, id
+
+        raw = input
+
+        input.replace(/^!-|^-!|^!|^-/, (match) => {
             negative = match != '!'
             important = match != '-'
             return ''
         })
 
         if (this.config.prefix) {
-            if (className.startsWith(this.config.prefix))
-                className = className.slice(this.config.prefix.length)
+            if (input.startsWith(this.config.prefix))
+                input = input.slice(this.config.prefix.length)
             else return
         }
 
-        variantNames = className.split(this.config.variantSeparator)
-        pluginArgs = variantNames.pop().split(this.config.separator)
-        pluginName = pluginArgs.shift()
+        variants = input.split(this.config.variantSeparator)
+        parts = variants.pop().split(this.config.separator)
+        id = parts.shift()
+
+        return {raw, negative, important, variants, parts, id}
+    }
+
         plugin = this.config.plugins[pluginName]
         if(!plugin) {
             console.log(`Unsupported plugin name "${pluginName}" in "${raw}".`)
