@@ -7,9 +7,9 @@ export default class Processor {
     processUtil(input) {
         let raw, negative, important, variants, parts, id
 
-        raw = input
+        raw = input // -!sm:hover:h-3
 
-        input.replace(/^!-|^-!|^!|^-/, (match) => {
+        input.replace(/^!-|^-!|^!|^-/, (match) => { // sm:hover:h-3
             negative = match != '!'
             important = match != '-'
             return ''
@@ -21,9 +21,9 @@ export default class Processor {
             else return
         }
 
-        variants = input.split(this.config.variantSeparator)
-        parts = variants.pop().split(this.config.separator)
-        id = parts.shift()
+        variants = input.split(this.config.variantSeparator) // sm, hover
+        parts = variants.pop().split(this.config.separator) // h, 3
+        id = parts.shift() // h
 
         return {raw, negative, important, variants, parts, id}
     }
