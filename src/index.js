@@ -30,25 +30,30 @@ export default class Processor {
         return {raw, negative, important, variants, parts, id}
     }
 
-    interpretclassName(className) {
-        if (this.excluded(className)) {
+    processClass(className) {
+        if (this.excluded(className))
             return
-        }
+
         util = parseUtil(className)
-        plugin = this.config.plugins[util.id]
+
+        plugin = this.plugins.utilities[util.id]
         if(!plugin) {
             console.log(`Unsupported plugin name "${pluginName}" in "${raw}".`)
             return
         }
-        plugin.call(util)
+        styles = plugin.call(util)
+
         for (variant in variants) {
             variantF = this.variants[variant]
-            if (!variant) {
+            if (!variantF) {
                 console.log(`Unsupported variant name "${variant}" in "${raw}".`)
                 return
             }
             if (!utils[variant]) utils[variant] = {}
+            utils = utils[variant]
         }
+
+        utils[styles
     }
     
     interpret(classNames, ignoreProcessed, handleIgnored) {
