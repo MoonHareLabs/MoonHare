@@ -4,7 +4,7 @@ export default class Processor {
         this.utils = {}
     }
 
-    processUtil(input) {
+    parseUtil(input) {
         let raw, negative, important, variants, parts, id
 
         raw = input // -!sm:hover:mh-h-3
@@ -30,19 +30,29 @@ export default class Processor {
         return {raw, negative, important, variants, parts, id}
     }
 
-        plugin = this.config.plugins[pluginName]
+    interpretclassName(className) {
+        if (this.excluded(className)) {
+            return
+        }
+        util = parseUtil(className)
+        plugin = this.config.plugins[util.id]
         if(!plugin) {
             console.log(`Unsupported plugin name "${pluginName}" in "${raw}".`)
+            return
         }
-        block = plugin.call({
-            raw: raw,
-            className: className,
-            important: important,
-            negative: negative,
-            variants: variantNames,
-            args: pluginArgs,
-            get rawArgs() { return pluginArgs.join(this.config.separator) },
-        })
+        plugin.call(util)
+        for (variant in variants) {
+            variantF = this.variants[variant]
+            if (!variant) {
+                console.log(`Unsupported variant name "${variant}" in "${raw}".`)
+                return
+            }
+            if (!utils[variant]) utils[variant] = {}
+        }
+    }
+    
+    interpret(classNames, ignoreProcessed, handleIgnored) {
+        
         for (variantName in variantNames) {
             variant = this.variants[variantName]
             if (!variant) {
