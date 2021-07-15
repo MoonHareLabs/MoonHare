@@ -7,23 +7,25 @@ export default class Processor {
     processUtil(input) {
         let raw, negative, important, variants, parts, id
 
-        raw = input // -!sm:hover:h-3
+        raw = input // -!sm:hover:mh-h-3
 
-        input.replace(/^!-|^-!|^!|^-/, (match) => { // sm:hover:h-3
+        input.replace(/^!-|^-!|^!|^-/, (match) => { // sm:hover:mh-h-3
             negative = match != '!'
             important = match != '-'
             return ''
         })
 
+        variants = input.split(this.config.variantSeparator) // sm, hover
+
+        parts = variants.pop().split(this.config.separator) // mh, h, 3
+
+        id = parts.shift() // mh
+
         if (this.config.prefix) {
-            if (input.startsWith(this.config.prefix))
-                input = input.slice(this.config.prefix.length)
+            if (id == this.config.prefix)
+                id = parts.shift() // h
             else return
         }
-
-        variants = input.split(this.config.variantSeparator) // sm, hover
-        parts = variants.pop().split(this.config.separator) // h, 3
-        id = parts.shift() // h
 
         return {raw, negative, important, variants, parts, id}
     }
