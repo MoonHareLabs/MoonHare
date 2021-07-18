@@ -27,46 +27,51 @@ export default class Processor {
             else return
         }
 
-        return {raw, negative, important, variants, parts, id}
+        return {
+            raw,
+            negative,
+            important,
+            variants,
+            parts,
+            id
+        }
     }
 
-    processClass(className) {
-        if (this.excluded(className))
-            return
 
-        util = parseUtil(className)
+    extract(className) {
+        let raw, negative, important, variants, utility
+        raw = className // -!sm:hover:mh-h-3
 
-        plugin = this.plugins.utilities[util.id]
-        if(!plugin) {
-            console.log(`Unsupported plugin name "${pluginName}" in "${raw}".`)
-            return
-        }
-        styles = plugin.call(util)
+        className = className.replace(/^!-|^-!|^!|^-/, (match) => { // sm:hover:mh-h-3
+            negative = match != '!'
+            important = match != '-'
+            return ''
+        })
 
-        for (variant in variants) {
-            variantF = this.variants[variant]
-            if (!variantF) {
-                console.log(`Unsupported variant name "${variant}" in "${raw}".`)
-                return
-            }
-            if (!utils[variant]) utils[variant] = {}
-            utils = utils[variant]
-        }
+        variants = className.split(this.config.separator) // sm, hover
 
-        utils[styles
-    }
-    
-    interpret(classNames, ignoreProcessed, handleIgnored) {
+        className = variants.pop()// mh-h-3
         
-        for (variantName in variantNames) {
-            variant = this.variants[variantName]
-            if (!variant) {
-                console.log(`Unsupported variant name "${variantName}" in "${raw}".`)
-                return
+        className = className.replace(new RegExp(`^${this.config.prefix}`), '');
+
+        // handle static utilities & components
+        if (className in this.plugin.utilities)
+            return this.plugin.utilities[className];
+        else if (className in this.plugin.components)
+            return this.plugin.components[className];
+        else if (className in this.plugin.shortcuts)
+            return this.plugin.shortcuts[className];
+        
+        // handle dynamic utilities
+        
+        utility = new Utility({ className, raw, variants, negative, important });
+        for (const [key, generator] of Object.entries(processor._plugin.dynamic)) {
+            if (className.match(new RegExp(`^${key}`))) {
+                let style = generator(utility);
+                if (style)
+                    return style;
             }
-            utils = utils[variantName] || {}
-            if (!utils) utils[variantName] = utils
-            selector = variant.call(selector)
         }
     }
+
 }
