@@ -9,7 +9,7 @@ export default class Processor {
 
         raw = input // -!sm:hover:mh-h-3
 
-        input.replace(/^!-|^-!|^!|^-/, (match) => { // sm:hover:mh-h-3
+        input = input.replace(/^!-|^-!|^!|^-/, (match) => { // sm:hover:mh-h-3
             negative = match != '!'
             important = match != '-'
             return ''
