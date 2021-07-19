@@ -351,11 +351,11 @@ export interface Config {
 
   // ===== Depreacted =====
   /**
-   * @deprecated no longer needed for Windi CSS
+   * @deprecated no longer needed for MoonHare CSS
    */
   purge?: unknown;
   /**
-   * @deprecated no longer needed for Windi CSS
+   * @deprecated no longer needed for MoonHare CSS
    */
   variants?: { [key: string]: string[] };
   /**
