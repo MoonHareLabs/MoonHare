@@ -38,7 +38,7 @@ Options:
   -d, --dev             Enable hot reload and watch mode.
   -m, --minify          Generate minimized css file.
   -z, --fuzzy           Enable fuzzy match, only works in interpration mode.
-  -p, --prefix PREFIX   Set the css class name prefix, only valid in compilation mode. The default prefix is 'moonhare-'.
+  -p, --prefix PREFIX   Set the css class name prefix, only valid in compilation mode. The default prefix is 'mh-'.
   -o, --output PATH     Set output css file path.
   -f, --config PATH     Set config file path.
 
