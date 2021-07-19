@@ -1,5 +1,5 @@
 Tools / allows to use prefix with shortcuts / shortcuts with prefix / 0: |-
-  .windi-btn {
+  .mh-btn {
     border-radius: 0.5rem;
     font-weight: 600;
     padding-top: 0.5rem;
@@ -11,13 +11,13 @@ Tools / allows to use prefix with shortcuts / shortcuts with prefix / 0: |-
     -webkit-box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
     box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
   }
-  .windi-btn-green {
+  .mh-btn-green {
     --tw-bg-opacity: 1;
     background-color: rgba(16, 185, 129, var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgba(255, 255, 255, var(--tw-text-opacity));
   }
-  .windi-btn-green:hover {
+  .mh-btn-green:hover {
     --tw-bg-opacity: 1;
     background-color: rgba(4, 120, 87, var(--tw-bg-opacity));
   }
