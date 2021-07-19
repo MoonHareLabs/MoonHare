@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite';
-import windi from 'vite-plugin-windicss';
+import mh from 'vite-plugin-moonhare';
 import markdown from 'vite-plugin-md';
 import vue from '@vitejs/plugin-vue';
 
@@ -9,7 +9,7 @@ export default defineConfig({
     vue({
       include: [/\.vue$/, /\.md$/],
     }),
-    windi(),
+    mh(),
     markdown(),
   ],
 });
