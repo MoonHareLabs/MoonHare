@@ -300,7 +300,7 @@ describe('Style', () => {
   });
 
   it('sort properties', () => {
-    const s = new Style('.windi-14r5bq6');
+    const s = new Style('.mh-14r5bq6');
     s.add(new Property('position', 'relative'));
     s.add(new Property(['padding-left', 'padding-right'], '1rem'));
     s.add(new Property(['padding-top', 'padding-bottom'], '2.5rem'));
@@ -324,7 +324,7 @@ describe('Style', () => {
       )
     );
     expect(s.flat().sort().build(true)).toBe(
-      '.windi-14r5bq6{--tw-shadow:0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);--tw-bg-opacity:1;-webkit-box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);background-color:rgba(255, 255, 255, var(--tw-bg-opacity));box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);padding-bottom:2.5rem;padding-top:2.5rem;padding-right:1rem;padding-left:1rem;position:relative}'
+      '.mh-14r5bq6{--tw-shadow:0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);--tw-bg-opacity:1;-webkit-box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);background-color:rgba(255, 255, 255, var(--tw-bg-opacity));box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);padding-bottom:2.5rem;padding-top:2.5rem;padding-right:1rem;padding-left:1rem;position:relative}'
     );
   });
 
