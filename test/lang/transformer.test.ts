@@ -176,7 +176,7 @@ describe('Transformer', () => {
       @attr[sm:text] red-500 opacity-30;
 
       @js {
-        import { eval, rgba, get, set } from 'windi/lang';
+        import { eval, rgba, get, set } from 'moonhare/lang';
 
         const a = get('width');
         set('width', eval('4px'));
