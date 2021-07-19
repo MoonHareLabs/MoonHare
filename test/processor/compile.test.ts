@@ -7,7 +7,7 @@ describe('Compilation Mode', () => {
     const result = processor.compile(
       'font-bold \n\ttext-green-300 \nsm:dark:hover:text-lg sm:(bg-gray-100 hover:bg-gray-200) abc bg-cool-gray-300 bg-hex-fff'
     );
-    expect(result.className).toBe('windi-sarsyj');
+    expect(result.className).toBe('mh-sarsyj');
     expect(result.ignored).toEqual(['abc']);
     expect(result.success).toEqual([
       'font-bold',
@@ -39,7 +39,7 @@ describe('Compilation Mode', () => {
   });
 
   it('compile important', () => {
-    // .windi-17we48r {
+    // .mh-17we48r {
     //   --tw-text-opacity: 1 !important;
     //   color: rgba(110, 231, 183, var(--tw-text-opacity)) !important;
     //   font-weight: 700 !important;
