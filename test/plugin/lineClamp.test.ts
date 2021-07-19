@@ -34,14 +34,14 @@ describe('line clamp plugin', () => {
   });
 
   it('works with prefix', () => {
-    const processor = new Processor({ prefix: 'windi-' });
+    const processor = new Processor({ prefix: 'mh-' });
     processor.loadPlugin(lineClamp);
     const classes = `
-      windi-line-clamp-1
-      windi-line-clamp-4
-      windi-line-clamp-none
-      sm:windi-line-clamp-none
-      md:windi-line-clamp-4
+      mh-line-clamp-1
+      mh-line-clamp-4
+      mh-line-clamp-none
+      sm:mh-line-clamp-none
+      md:mh-line-clamp-4
     `;
     const result = processor.interpret(classes);
     expect(result.ignored.length).toEqual(0);

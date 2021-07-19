@@ -1,4 +1,4 @@
-// windi.config.js
+// moonhare.config.js
 const plugin = require('../../dist/plugin');
 const colors = require('../../dist/colors');
 

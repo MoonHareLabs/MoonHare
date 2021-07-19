@@ -13,10 +13,10 @@ const outputCSS: StyleSheet[] = [];
 let ignoredClass: string[] = [];
 let indexStart = 0;
 
-// Match windi ClassName then replace with new ClassName
+// Match mh ClassName then replace with new ClassName
 parser.parseClasses().forEach((p) => {
   outputHTML.push(html.substring(indexStart, p.start));
-  const result = processor.compile(p.result, 'windi-', true); // Set third argument to false to hide comments;
+  const result = processor.compile(p.result, 'mh-', true); // Set third argument to false to hide comments;
   outputCSS.push(result.styleSheet);
   ignoredClass = [...ignoredClass, ...result.ignored];
   outputHTML.push([result.className, ...result.ignored].join(' '));

@@ -17,13 +17,13 @@ describe('aspect ratio plugin', () => {
   });
 
   it('works with prefix', () => {
-    const processor = new Processor({ prefix: 'windi-' });
+    const processor = new Processor({ prefix: 'mh-' });
     processor.loadPlugin(aspectRatio);
     const classes = `
-      windi-aspect-none
-      windi-aspect-w-16
-      windi-aspect-h-9
-      sm:windi-aspect-9/16
+      mh-aspect-none
+      mh-aspect-w-16
+      mh-aspect-h-9
+      sm:mh-aspect-9/16
       `;
     const utility = processor.interpret(classes);
     expect(utility.ignored.length).toEqual(0);

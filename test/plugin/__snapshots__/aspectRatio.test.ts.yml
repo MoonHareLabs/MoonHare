@@ -51,11 +51,11 @@ Tools / interpret test / aspect-ratio base / 0: |-
     left: 0;
   }
 Tools / works with prefix / aspect-ratio with prefix / 0: |-
-  .windi-aspect-none {
+  .mh-aspect-none {
     position: static;
     padding-bottom: 0;
   }
-  .windi-aspect-none > * {
+  .mh-aspect-none > * {
     position: static;
     height: auto;
     width: auto;
@@ -64,12 +64,12 @@ Tools / works with prefix / aspect-ratio with prefix / 0: |-
     bottom: auto;
     left: auto;
   }
-  .windi-aspect-w-16 {
+  .mh-aspect-w-16 {
     --tw-aspect-w: 16;
     position: relative;
     padding-bottom: calc(var(--tw-aspect-h) / var(--tw-aspect-w) * 100%);
   }
-  .windi-aspect-w-16 > * {
+  .mh-aspect-w-16 > * {
     position: absolute;
     height: 100%;
     width: 100%;
@@ -78,15 +78,15 @@ Tools / works with prefix / aspect-ratio with prefix / 0: |-
     bottom: 0;
     left: 0;
   }
-  .windi-aspect-h-9 {
+  .mh-aspect-h-9 {
     --tw-aspect-h: 9;
   }
   @media (min-width: 640px) {
-    .sm\:windi-aspect-9\/16 {
+    .sm\:mh-aspect-9\/16 {
       position: relative;
       padding-bottom: 56.25%;
     }
-    .sm\:windi-aspect-9\/16 > * {
+    .sm\:mh-aspect-9\/16 > * {
       position: absolute;
       height: 100%;
       width: 100%;

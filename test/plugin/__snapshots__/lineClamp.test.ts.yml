@@ -55,28 +55,28 @@ Tools / interpret test / line-clamp / 0: |-
     }
   }
 Tools / works with prefix / line-clamp with prefix / 0: |-
-  .windi-line-clamp-1 {
+  .mh-line-clamp-1 {
     overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 1;
   }
-  .windi-line-clamp-4 {
+  .mh-line-clamp-4 {
     overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 4;
   }
-  .windi-line-clamp-none {
+  .mh-line-clamp-none {
     -webkit-line-clamp: unset;
   }
   @media (min-width: 640px) {
-    .sm\:windi-line-clamp-none {
+    .sm\:mh-line-clamp-none {
       -webkit-line-clamp: unset;
     }
   }
   @media (min-width: 768px) {
-    .md\:windi-line-clamp-4 {
+    .md\:mh-line-clamp-4 {
       overflow: hidden;
       display: -webkit-box;
       -webkit-box-orient: vertical;

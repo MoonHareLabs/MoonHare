@@ -5,7 +5,7 @@ import { twExclude } from '../../src/config';
 import { CSSParser } from '../../src/utils/parser';
 import type { colorObject } from '../../src/interfaces';
 
-const configPath = resolve('./test/assets/windi.config.js');
+const configPath = resolve('./test/assets/moonhare.config.js');
 const userConfig = require(configPath);
 
 describe('Config', () => {
@@ -115,11 +115,11 @@ describe('Config', () => {
   });
 
   it('does not generate non-prefixed classes when using prefix', () => {
-    const processor = new Processor({ prefix: 'windi-' });
-    const classes = 'items-center justify-center flex-wrap block flex windi-block';
+    const processor = new Processor({ prefix: 'mh-' });
+    const classes = 'items-center justify-center flex-wrap block flex mh-block';
     // it should not compile the standard classes (items-center, justify-center) because they are not prefixed
     expect(processor.interpret(classes).styleSheet.build()).toBe(
-      '.windi-block {\n  display: block;\n}'
+      '.mh-block {\n  display: block;\n}'
     );
   });
 
@@ -276,7 +276,7 @@ describe('Config', () => {
 
   it('allows to use prefix with shortcuts', () => {
     const processor = new Processor({
-      prefix: 'windi-',
+      prefix: 'mh-',
       shortcuts: {
         'btn': 'py-2 px-4 font-semibold rounded-lg shadow-md',
         'btn-green': {
@@ -284,7 +284,7 @@ describe('Config', () => {
         },
       },
     });
-    const result = processor.interpret('windi-btn windi-btn-green');
+    const result = processor.interpret('mh-btn mh-btn-green');
     expect(result.ignored.length).toEqual(0);
     expect(result.styleSheet.build()).toMatchSnapshot('shortcuts with prefix');
   });
